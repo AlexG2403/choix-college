@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choix du collège</title>
+<style>:root{--color-fg:#1f1e1c;--color-fg-muted:#6b6a66;--color-bg:#ffffff;--color-panel:#f7f6f3;--color-border-line:#e4e2dc;--color-ok:#1f7a4d;--color-warn:#a8620a;--color-bad:#c0392b;
+--cds-chart-muted:#b9b6ae;--cds-chart-grid:#ebe9e3;--cds-chart-axis:#c9c6be;--cds-chart-reference:#55534e;--cds-chart-status-critical:#d0503f;
+--cds-surface-popover:#ffffff;--cds-border:#dedbd3;--cds-shadow-popover:0 4px 16px rgba(0,0,0,.12);--cds-text-secondary:#6b6a66;
+--font-anthropic-sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--font-anthropic-serif:Georgia,"Times New Roman",serif;
+--cds-font-size-caption:12.5px;--cds-font-size-body:15px;--cds-font-size-heading:17px;--cds-font-size-title:28px;--cds-font-weight-medium:600;
+--cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:14px;--cds-gap-lg:20px;--cds-gap-xl:36px;--cds-pad-xs:4px;--cds-pad-sm:8px;--cds-pad-md:12px;--cds-pad-lg:18px;--cds-pad-xl:28px;
+--cds-radius:10px;--cds-dur-slow:.3s}
+@media (prefers-color-scheme: dark){:root{--color-fg:#ecebe7;--color-fg-muted:#a4a29c;--color-bg:#1c1b19;--color-panel:#262522;--color-border-line:#3a3935;--color-ok:#5cc28f;--color-bad:#ef7a6b;
+--cds-chart-muted:#6d6b65;--cds-chart-grid:#33322e;--cds-chart-axis:#4a4944;--cds-chart-reference:#c9c6be;--cds-surface-popover:#2c2b28;--cds-border:#44433e;--cds-text-secondary:#a4a29c}}
+body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(--font-anthropic-sans)}
+#dash-root{padding:20px 16px 40px}
+.cx-source{margin-top:28px;font-size:12.5px;color:var(--color-fg-muted)}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>(function(){
+  var RAW = {"colleges": [{"rang": "1", "college": "Alexandre Fleming", "commune": "Orsay", "secteur": "Public", "francais": "304", "maths": "310", "distance_km": "26", "reussite_brevet": "92", "note_brevet": "13.5", "mentions_brevet": "81"}, {"rang": "2", "college": "Cours secondaire d'Orsay", "commune": "Orsay", "secteur": "Privé", "francais": "300", "maths": "309", "distance_km": "25.8", "reussite_brevet": "100", "note_brevet": "13.9", "mentions_brevet": "100"}, {"rang": "3", "college": "Établissement non identifié", "commune": "", "secteur": "Privé", "francais": "291", "maths": "294", "distance_km": "", "reussite_brevet": "", "note_brevet": "", "mentions_brevet": ""}, {"rang": "4", "college": "Charles Péguy", "commune": "Palaiseau", "secteur": "Public", "francais": "289", "maths": "295", "distance_km": "24.4", "reussite_brevet": "85", "note_brevet": "12.2", "mentions_brevet": "74.5"}, {"rang": "5", "college": "Saint-Pierre", "commune": "Brunoy", "secteur": "Privé", "francais": "291", "maths": "287", "distance_km": "18.5", "reussite_brevet": "100", "note_brevet": "13.5", "mentions_brevet": "95"}, {"rang": "6", "college": "Jeanne d'Arc", "commune": "Brétigny-sur-Orge", "secteur": "Privé", "francais": "285", "maths": "292", "distance_km": "13", "reussite_brevet": "100", "note_brevet": "13.3", "mentions_brevet": "91.1"}, {"rang": "7", "college": "Les Goussons", "commune": "Gif-sur-Yvette", "secteur": "Public", "francais": "287", "maths": "290", "distance_km": "29.4", "reussite_brevet": "90", "note_brevet": "12.6", "mentions_brevet": "79.2"}, {"rang": "8", "college": "Juliette Adam", "commune": "Gif-sur-Yvette", "secteur": "Public", "francais": "283", "maths": "284", "distance_km": "29.7", "reussite_brevet": "91", "note_brevet": "13", "mentions_brevet": "82.8"}, {"rang": "9", "college": "La Guyonnerie", "commune": "Bures-sur-Yvette", "secteur": "Public", "francais": "275", "maths": "289", "distance_km": "28", "reussite_brevet": "85", "note_brevet": "11.6", "mentions_brevet": "77.5"}, {"rang": "10", "college": "Alain Fournier", "commune": "Orsay", "secteur": "Public", "francais": "278", "maths": "284", "distance_km": "26.1", "reussite_brevet": "96", "note_brevet": "12.6", "mentions_brevet": "90.3"}, {"rang": "11", "college": "Michel Vignaud", "commune": "Limours", "secteur": "Public", "francais": "283", "maths": "278", "distance_km": "29", "reussite_brevet": "96", "note_brevet": "12", "mentions_brevet": "84.1"}, {"rang": "12", "college": "Notre-Dame", "commune": "Draveil", "secteur": "Privé", "francais": "284", "maths": "276", "distance_km": "17.1", "reussite_brevet": "99", "note_brevet": "13.3", "mentions_brevet": "95.7"}, {"rang": "13", "college": "Sacré-Coeur", "commune": "La Ville-du-Bois", "secteur": "Privé", "francais": "282", "maths": "277", "distance_km": "19.3", "reussite_brevet": "100", "note_brevet": "13.7", "mentions_brevet": "98.3"}, {"rang": "14", "college": "Sacré-Coeur", "commune": "Savigny-sur-Orge", "secteur": "Privé", "francais": "281", "maths": "277", "distance_km": "17.3", "reussite_brevet": "98", "note_brevet": "12.2", "mentions_brevet": "75"}, {"rang": "15", "college": "Saint-Exupéry", "commune": "Marolles-en-Hurepoix", "secteur": "Public", "francais": "278", "maths": "277", "distance_km": "10.4", "reussite_brevet": "88", "note_brevet": "10.2", "mentions_brevet": "67.2"}, {"rang": "16", "college": "Saint-Louis - Saint-Clément", "commune": "Viry-Châtillon", "secteur": "Privé", "francais": "276", "maths": "278", "distance_km": "16.3", "reussite_brevet": "99", "note_brevet": "13.2", "mentions_brevet": "90.2"}, {"rang": "17", "college": "Notre-Dame de Sion", "commune": "Evry-Courcouronnes", "secteur": "Privé", "francais": "281", "maths": "272", "distance_km": "12.5", "reussite_brevet": "98", "note_brevet": "12.4", "mentions_brevet": "94.2"}, {"rang": "18", "college": "Saint-Spire", "commune": "Corbeil-Essonnes", "secteur": "Privé", "francais": "285", "maths": "267", "distance_km": "9.4", "reussite_brevet": "97", "note_brevet": "12.4", "mentions_brevet": "88.8"}, {"rang": "19", "college": "Émile Zola", "commune": "Igny", "secteur": "Public", "francais": "278", "maths": "271", "distance_km": "28", "reussite_brevet": "83", "note_brevet": "12", "mentions_brevet": "71.9"}, {"rang": "20", "college": "Jules Verne", "commune": "Villebon-sur-Yvette", "secteur": "Public", "francais": "275", "maths": "273", "distance_km": "24.2", "reussite_brevet": "82", "note_brevet": "11.5", "mentions_brevet": "68.3"}, {"rang": "21", "college": "Rudolf Steiner", "commune": "Verrières-le-Buisson", "secteur": "Privé", "francais": "273", "maths": "273", "distance_km": "27.2", "reussite_brevet": "87", "note_brevet": "11.8", "mentions_brevet": "87"}, {"rang": "22", "college": "Blaise Pascal", "commune": "Villemoisson-sur-Orge", "secteur": "Public", "francais": "272", "maths": "272", "distance_km": "16.6", "reussite_brevet": "87", "note_brevet": "11.6", "mentions_brevet": "72.9"}, {"rang": "23", "college": "Jean Moulin", "commune": "Verrières-le-Buisson", "secteur": "Public", "francais": "269", "maths": "273", "distance_km": "27.2", "reussite_brevet": "86", "note_brevet": "11.4", "mentions_brevet": "70.8"}, {"rang": "24", "college": "de l'Ermitage", "commune": "Soisy-sur-Seine", "secteur": "Public", "francais": "271", "maths": "269", "distance_km": "12.9", "reussite_brevet": "88", "note_brevet": "11.1", "mentions_brevet": "74.4"}, {"rang": "25", "college": "Louis Pasteur", "commune": "Brunoy", "secteur": "Public", "francais": "276", "maths": "262", "distance_km": "19.4", "reussite_brevet": "90", "note_brevet": "12.2", "mentions_brevet": "80.7"}, {"rang": "26", "college": "Jeanne d'Arc", "commune": "Etampes", "secteur": "Privé", "francais": "275", "maths": "263", "distance_km": "23.3", "reussite_brevet": "100", "note_brevet": "12.2", "mentions_brevet": "90.6"}, {"rang": "27", "college": "Saint Vincent de Paul", "commune": "Villebon-sur-Yvette", "secteur": "Privé", "francais": "277", "maths": "255", "distance_km": "23.1", "reussite_brevet": "95", "note_brevet": "11.9", "mentions_brevet": "82.5"}, {"rang": "28", "college": "Sainte-Thérèse", "commune": "Montgeron", "secteur": "Privé", "francais": "272", "maths": "258", "distance_km": "19.7", "reussite_brevet": "99", "note_brevet": "12.3", "mentions_brevet": "87"}, {"rang": "29", "college": "Le Roussay", "commune": "Etréchy", "secteur": "Public", "francais": "265", "maths": "265", "distance_km": "19.9", "reussite_brevet": "80", "note_brevet": "10.4", "mentions_brevet": "73.6"}, {"rang": "30", "college": "Germaine Tillion", "commune": "Lardy", "secteur": "Public", "francais": "269", "maths": "261", "distance_km": "10.7", "reussite_brevet": "83", "note_brevet": "10.1", "mentions_brevet": "61.4"}, {"rang": "31", "college": "César Franck", "commune": "Palaiseau", "secteur": "Public", "francais": "271", "maths": "258", "distance_km": "25.5", "reussite_brevet": "82", "note_brevet": "11.3", "mentions_brevet": "71.3"}, {"rang": "32", "college": "Joseph Bara", "commune": "Palaiseau", "secteur": "Public", "francais": "270", "maths": "256", "distance_km": "24.8", "reussite_brevet": "81", "note_brevet": "11.5", "mentions_brevet": "67.2"}, {"rang": "33", "college": "Jean Monnet", "commune": "Briis-sous-Forges", "secteur": "Public", "francais": "260", "maths": "266", "distance_km": "25.1", "reussite_brevet": "97", "note_brevet": "12.4", "mentions_brevet": "83.6"}, {"rang": "34", "college": "Pierre Mendès France", "commune": "Marcoussis", "secteur": "Public", "francais": "261", "maths": "261", "distance_km": "19.9", "reussite_brevet": "77", "note_brevet": "10.5", "mentions_brevet": "65.3"}, {"rang": "35", "college": "Saint-Charles", "commune": "Athis-Mons", "secteur": "Privé", "francais": "271", "maths": "251", "distance_km": "20.1", "reussite_brevet": "98", "note_brevet": "12.2", "mentions_brevet": "88.6"}, {"rang": "36", "college": "Denis Diderot", "commune": "Massy", "secteur": "Public", "francais": "262", "maths": "260", "distance_km": "24.7", "reussite_brevet": "80", "note_brevet": "9.1", "mentions_brevet": "67.6"}, {"rang": "37", "college": "André Maurois", "commune": "Epinay-sur-Orge", "secteur": "Public", "francais": "266", "maths": "256", "distance_km": "18.6", "reussite_brevet": "82", "note_brevet": "11.1", "mentions_brevet": "71"}, {"rang": "38", "college": "Jeanne d'Arc", "commune": "Dourdan", "secteur": "Privé", "francais": "263", "maths": "258", "distance_km": "31.4", "reussite_brevet": "99", "note_brevet": "11.6", "mentions_brevet": "84.1"}, {"rang": "39", "college": "Bellevue", "commune": "Crosne", "secteur": "Public", "francais": "255", "maths": "259", "distance_km": "21", "reussite_brevet": "75", "note_brevet": "9.6", "mentions_brevet": "60"}, {"rang": "40", "college": "La Tuilerie", "commune": "Saint-Germain-lès-Corbeil", "secteur": "Public", "francais": "259", "maths": "255", "distance_km": "10.5", "reussite_brevet": "74", "note_brevet": "8.6", "mentions_brevet": "56.3"}, {"rang": "41", "college": "Rosa Luxemburg", "commune": "Lisses", "secteur": "Public", "francais": "260", "maths": "249", "distance_km": "7.9", "reussite_brevet": "72", "note_brevet": "9.3", "mentions_brevet": "51.8"}, {"rang": "42", "college": "Albert Camus", "commune": "La Ferté-Alais", "secteur": "Public", "francais": "259", "maths": "249", "distance_km": "9.1", "reussite_brevet": "88", "note_brevet": "9.5", "mentions_brevet": "75.4"}, {"rang": "43", "college": "Louise Weiss", "commune": "Nozay", "secteur": "Public", "francais": "260", "maths": "248", "distance_km": "20.4", "reussite_brevet": "83", "note_brevet": "10", "mentions_brevet": "68.7"}, {"rang": "44", "college": "Charles Péguy", "commune": "Bondoufle", "secteur": "Public", "francais": "253", "maths": "255", "distance_km": "10.2", "reussite_brevet": "80", "note_brevet": "9.8", "mentions_brevet": "58.4"}, {"rang": "45", "college": "Robert Doisneau", "commune": "Itteville", "secteur": "Public", "francais": "255", "maths": "253", "distance_km": "6.5", "reussite_brevet": "80", "note_brevet": "10", "mentions_brevet": "65.4"}, {"rang": "46", "college": "Jules Ferry", "commune": "Sainte-Geneviève-des-Bois", "secteur": "Public", "francais": "244", "maths": "261", "distance_km": "15.5", "reussite_brevet": "81", "note_brevet": "10.1", "mentions_brevet": "57.5"}, {"rang": "47", "college": "Condorcet", "commune": "Dourdan", "secteur": "Public", "francais": "254", "maths": "251", "distance_km": "33", "reussite_brevet": "78", "note_brevet": "9.5", "mentions_brevet": "63"}, {"rang": "48", "college": "Moreau", "commune": "Montlhéry", "secteur": "Privé", "francais": "255", "maths": "250", "distance_km": "17", "reussite_brevet": "86", "note_brevet": "9.4", "mentions_brevet": "63.2"}, {"rang": "49", "college": "La Fontaine aux Bergers", "commune": "Ollainville", "secteur": "Public", "francais": "256", "maths": "247", "distance_km": "17.3", "reussite_brevet": "78", "note_brevet": "10.3", "mentions_brevet": "62.4"}, {"rang": "50", "college": "Paul Fort", "commune": "Montlhéry", "secteur": "Public", "francais": "249", "maths": "251", "distance_km": "16.8", "reussite_brevet": "77", "note_brevet": "9.5", "mentions_brevet": "59.1"}, {"rang": "51", "college": "Le Saussay", "commune": "Ballancourt-sur-Essonne", "secteur": "Public", "francais": "251", "maths": "248", "distance_km": "5", "reussite_brevet": "77", "note_brevet": "9.4", "mentions_brevet": "62"}, {"rang": "52", "college": "Rosa Parks", "commune": "Villabé", "secteur": "Public", "francais": "253", "maths": "246", "distance_km": "6.7", "reussite_brevet": "79", "note_brevet": "9.6", "mentions_brevet": "63.8"}, {"rang": "53", "college": "Les Gâtines - René Cassin", "commune": "Savigny-sur-Orge", "secteur": "Public", "francais": "253", "maths": "245", "distance_km": "18.7", "reussite_brevet": "83", "note_brevet": "10.7", "mentions_brevet": "65.8"}, {"rang": "54", "college": "Pablo Picasso", "commune": "Saulx-les-Chartreux", "secteur": "Public", "francais": "250", "maths": "247", "distance_km": "21.2", "reussite_brevet": "85", "note_brevet": "9.8", "mentions_brevet": "69.5"}, {"rang": "55", "college": "Albert Camus", "commune": "La Norville", "secteur": "Public", "francais": "250", "maths": "247", "distance_km": "14.8", "reussite_brevet": "87", "note_brevet": "10.9", "mentions_brevet": "73.3"}, {"rang": "56", "college": "Pablo Neruda", "commune": "Brétigny-sur-Orge", "secteur": "Public", "francais": "250", "maths": "247", "distance_km": "12.2", "reussite_brevet": "80", "note_brevet": "9", "mentions_brevet": "64.4"}, {"rang": "57", "college": "Le Parc de Villeroy", "commune": "Mennecy", "secteur": "Public", "francais": "248", "maths": "246", "distance_km": "3.6", "reussite_brevet": "87", "note_brevet": "10.3", "mentions_brevet": "67.8"}, {"rang": "58", "college": "Jean Rostand", "commune": "Milly-la-Forêt", "secteur": "Public", "francais": "247", "maths": "247", "distance_km": "14.8", "reussite_brevet": "74", "note_brevet": "9.3", "mentions_brevet": "52.9"}, {"rang": "59", "college": "Guillaume Budé", "commune": "Yerres", "secteur": "Public", "francais": "248", "maths": "245", "distance_km": "20.9", "reussite_brevet": "76", "note_brevet": "11.1", "mentions_brevet": "59.9"}, {"rang": "60", "college": "Camille Claudel", "commune": "Saint-Pierre-du-Perray", "secteur": "Public", "francais": "255", "maths": "237", "distance_km": "10.3", "reussite_brevet": "92", "note_brevet": "9.7", "mentions_brevet": "74.7"}, {"rang": "61", "college": "Claudine Hermann", "commune": "Massy", "secteur": "Public", "francais": "248", "maths": "244", "distance_km": "26.2", "reussite_brevet": "", "note_brevet": "", "mentions_brevet": ""}, {"rang": "62", "college": "Jean-Étienne Guettard", "commune": "Etampes", "secteur": "Public", "francais": "254", "maths": "237", "distance_km": "23.3", "reussite_brevet": "83", "note_brevet": "10", "mentions_brevet": "63.4"}, {"rang": "63", "college": "Weiler", "commune": "Montgeron", "secteur": "Public", "francais": "246", "maths": "245", "distance_km": "19.2", "reussite_brevet": "72", "note_brevet": "9.5", "mentions_brevet": "47.3"}, {"rang": "64", "college": "Jean Moulin", "commune": "La Norville", "secteur": "Public", "francais": "249", "maths": "242", "distance_km": "15", "reussite_brevet": "73", "note_brevet": "9.7", "mentions_brevet": "58.9"}, {"rang": "65", "college": "Paul Bert", "commune": "Savigny-sur-Orge", "secteur": "Public", "francais": "250", "maths": "241", "distance_km": "17.5", "reussite_brevet": "73", "note_brevet": "9.4", "mentions_brevet": "61.1"}, {"rang": "66", "college": "Alphonse Daudet", "commune": "Draveil", "secteur": "Public", "francais": "253", "maths": "236", "distance_km": "17", "reussite_brevet": "83", "note_brevet": "10.2", "mentions_brevet": "59.2"}, {"rang": "67", "college": "Jean Zay", "commune": "Morsang-sur-Orge", "secteur": "Public", "francais": "251", "maths": "238", "distance_km": "14.8", "reussite_brevet": "74", "note_brevet": "9.4", "mentions_brevet": "57.8"}, {"rang": "68", "college": "Jean Moulin", "commune": "Saint-Michel-sur-Orge", "secteur": "Public", "francais": "251", "maths": "237", "distance_km": "15.4", "reussite_brevet": "87", "note_brevet": "9.9", "mentions_brevet": "64.9"}, {"rang": "69", "college": "Félix Esclangon", "commune": "Viry-Châtillon", "secteur": "Public", "francais": "251", "maths": "236", "distance_km": "16.5", "reussite_brevet": "84", "note_brevet": "9.4", "mentions_brevet": "66.2"}, {"rang": "70", "college": "André Dunoyer de Segonzac", "commune": "Boussy-Saint-Antoine", "secteur": "Public", "francais": "247", "maths": "240", "distance_km": "17.8", "reussite_brevet": "85", "note_brevet": "10.1", "mentions_brevet": "68.3"}, {"rang": "71", "college": "Paul Éluard", "commune": "Brétigny-sur-Orge", "secteur": "Public", "francais": "251", "maths": "235", "distance_km": "12.9", "reussite_brevet": "77", "note_brevet": "8.8", "mentions_brevet": "51.7"}, {"rang": "72", "college": "Marie Curie", "commune": "Etampes", "secteur": "Public", "francais": "248", "maths": "238", "distance_km": "23.5", "reussite_brevet": "86", "note_brevet": "8.9", "mentions_brevet": "55.8"}, {"rang": "73", "college": "Michel Vignaud", "commune": "Morangis", "secteur": "Public", "francais": "242", "maths": "242", "distance_km": "20.5", "reussite_brevet": "83", "note_brevet": "9.9", "mentions_brevet": "66.3"}, {"rang": "74", "college": "Saint-Nicolas", "commune": "Igny", "secteur": "Privé", "francais": "248", "maths": "236", "distance_km": "28", "reussite_brevet": "81", "note_brevet": "9.9", "mentions_brevet": "58.6"}, {"rang": "75", "college": "Henri Wallon", "commune": "Vigneux-sur-Seine", "secteur": "Public", "francais": "248", "maths": "236", "distance_km": "17.5", "reussite_brevet": "85", "note_brevet": "8.9", "mentions_brevet": "57.6"}, {"rang": "76", "college": "Pierre de Ronsard", "commune": "Paray-Vieille-Poste", "secteur": "Public", "francais": "243", "maths": "241", "distance_km": "21", "reussite_brevet": "79", "note_brevet": "10.1", "mentions_brevet": "56.5"}, {"rang": "77", "college": "Olympe de Gouges", "commune": "Champcueil", "secteur": "Public", "francais": "245", "maths": "238", "distance_km": "1.6", "reussite_brevet": "87", "note_brevet": "10.4", "mentions_brevet": "71.6"}, {"rang": "78", "college": "Eugène Delacroix", "commune": "Draveil", "secteur": "Public", "francais": "249", "maths": "233", "distance_km": "16.1", "reussite_brevet": "63", "note_brevet": "7.9", "mentions_brevet": "37.3"}, {"rang": "79", "college": "Paul Éluard", "commune": "Sainte-Geneviève-des-Bois", "secteur": "Public", "francais": "243", "maths": "239", "distance_km": "13.6", "reussite_brevet": "73", "note_brevet": "8.3", "mentions_brevet": "53.1"}, {"rang": "80", "college": "Roland Garros", "commune": "Saint-Germain-lès-Arpajon", "secteur": "Public", "francais": "242", "maths": "240", "distance_km": "15.3", "reussite_brevet": "70", "note_brevet": "8.7", "mentions_brevet": "51.5"}, {"rang": "81", "college": "Beth Rivkah", "commune": "Yerres", "secteur": "Privé", "francais": "250", "maths": "232", "distance_km": "20.4", "reussite_brevet": "86", "note_brevet": "11.3", "mentions_brevet": "71.4"}, {"rang": "82", "college": "Hubert Germain", "commune": "Saint-Chéron", "secteur": "Public", "francais": "240", "maths": "241", "distance_km": "23.4", "reussite_brevet": "81", "note_brevet": "10.5", "mentions_brevet": "66.3"}, {"rang": "83", "college": "Léonard de Vinci", "commune": "Guigneville-sur-Essonne", "secteur": "Public", "francais": "238", "maths": "243", "distance_km": "10.6", "reussite_brevet": "83", "note_brevet": "9.6", "mentions_brevet": "57.3"}, {"rang": "84", "college": "Charles Péguy", "commune": "Morsang-sur-Orge", "secteur": "Public", "francais": "243", "maths": "237", "distance_km": "16.1", "reussite_brevet": "78", "note_brevet": "8.4", "mentions_brevet": "54.1"}, {"rang": "85", "college": "Émile Auvray", "commune": "Dourdan", "secteur": "Public", "francais": "235", "maths": "245", "distance_km": "30.9", "reussite_brevet": "81", "note_brevet": "9.3", "mentions_brevet": "60.2"}, {"rang": "86", "college": "Wolfgang Amadeus Mozart", "commune": "Athis-Mons", "secteur": "Public", "francais": "241", "maths": "238", "distance_km": "19.6", "reussite_brevet": "82", "note_brevet": "9.1", "mentions_brevet": "62.7"}, {"rang": "87", "college": "Albert Camus", "commune": "Brunoy", "secteur": "Public", "francais": "249", "maths": "230", "distance_km": "20.3", "reussite_brevet": "84", "note_brevet": "8.5", "mentions_brevet": "66"}, {"rang": "88", "college": "Aimé Césaire", "commune": "Les Ulis", "secteur": "Public", "francais": "244", "maths": "235", "distance_km": "26.3", "reussite_brevet": "75", "note_brevet": "8.5", "mentions_brevet": "55.6"}, {"rang": "89", "college": "des Pyramides", "commune": "Evry-Courcouronnes", "secteur": "Public", "francais": "242", "maths": "236", "distance_km": "11.4", "reussite_brevet": "72", "note_brevet": "8", "mentions_brevet": "52.7"}, {"rang": "90", "college": "les Dînes Chiens", "commune": "Chilly-Mazarin", "secteur": "Public", "francais": "244", "maths": "232", "distance_km": "21.4", "reussite_brevet": "67", "note_brevet": "9.1", "mentions_brevet": "48.3"}, {"rang": "91", "college": "Mondétour", "commune": "Les Ulis", "secteur": "Public", "francais": "242", "maths": "234", "distance_km": "25.5", "reussite_brevet": "81", "note_brevet": "9", "mentions_brevet": "56.2"}, {"rang": "92", "college": "Jean Macé", "commune": "Sainte-Geneviève-des-Bois", "secteur": "Public", "francais": "237", "maths": "238", "distance_km": "14.1", "reussite_brevet": "85", "note_brevet": "10.5", "mentions_brevet": "68.7"}, {"rang": "93", "college": "Blaise Pascal", "commune": "Massy", "secteur": "Public", "francais": "238", "maths": "234", "distance_km": "24.8", "reussite_brevet": "80", "note_brevet": "8.2", "mentions_brevet": "66.2"}, {"rang": "94", "college": "Hubert Robert", "commune": "Le Mérévillois", "secteur": "Public", "francais": "234", "maths": "238", "distance_km": "35.6", "reussite_brevet": "83", "note_brevet": "9.6", "mentions_brevet": "61.3"}, {"rang": "95", "college": "La Vallée", "commune": "Epinay-sous-Sénart", "secteur": "Public", "francais": "243", "maths": "228", "distance_km": "19.7", "reussite_brevet": "70", "note_brevet": "6.9", "mentions_brevet": "44"}, {"rang": "96", "college": "Pablo Neruda", "commune": "Grigny", "secteur": "Public", "francais": "237", "maths": "233", "distance_km": "14", "reussite_brevet": "73", "note_brevet": "8.4", "mentions_brevet": "54.2"}, {"rang": "97", "college": "Ferdinand Buisson", "commune": "Juvisy-sur-Orge", "secteur": "Public", "francais": "241", "maths": "228", "distance_km": "18.2", "reussite_brevet": "85", "note_brevet": "10.4", "mentions_brevet": "65.3"}, {"rang": "98", "college": "Paul Fort", "commune": "Evry-Courcouronnes", "secteur": "Public", "francais": "244", "maths": "225", "distance_km": "9.8", "reussite_brevet": "67", "note_brevet": "9.5", "mentions_brevet": "47.3"}, {"rang": "99", "college": "Jean Lurçat", "commune": "Ris-Orangis", "secteur": "Public", "francais": "235", "maths": "234", "distance_km": "12.1", "reussite_brevet": "73", "note_brevet": "8.5", "mentions_brevet": "55.1"}, {"rang": "100", "college": "Galilée", "commune": "Evry-Courcouronnes", "secteur": "Public", "francais": "242", "maths": "227", "distance_km": "9.8", "reussite_brevet": "64", "note_brevet": "7.9", "mentions_brevet": "48.1"}, {"rang": "101", "college": "de Guinette", "commune": "Etampes", "secteur": "Public", "francais": "234", "maths": "233", "distance_km": "24.1", "reussite_brevet": "80", "note_brevet": "8.7", "mentions_brevet": "59.5"}, {"rang": "102", "college": "Jean Mermoz", "commune": "Savigny-sur-Orge", "secteur": "Public", "francais": "228", "maths": "239", "distance_km": "17.2", "reussite_brevet": "72", "note_brevet": "8.1", "mentions_brevet": "62.7"}, {"rang": "103", "college": "Gérard Philipe", "commune": "Massy", "secteur": "Public", "francais": "232", "maths": "235", "distance_km": "25.9", "reussite_brevet": "77", "note_brevet": "9", "mentions_brevet": "60.8"}, {"rang": "104", "college": "Nicolas Boileau", "commune": "Saint-Michel-sur-Orge", "secteur": "Public", "francais": "233", "maths": "231", "distance_km": "14.9", "reussite_brevet": "72", "note_brevet": "8.3", "mentions_brevet": "54.3"}, {"rang": "105", "college": "Sonia Delaunay", "commune": "Grigny", "secteur": "Public", "francais": "232", "maths": "232", "distance_km": "14.1", "reussite_brevet": "70", "note_brevet": "7.2", "mentions_brevet": "43"}, {"rang": "106", "college": "Montesquieu", "commune": "Evry-Courcouronnes", "secteur": "Public", "francais": "240", "maths": "223", "distance_km": "12", "reussite_brevet": "53", "note_brevet": "8.3", "mentions_brevet": "35.4"}, {"rang": "107", "college": "Michel-Richard Delalande", "commune": "Athis-Mons", "secteur": "Public", "francais": "230", "maths": "231", "distance_km": "20.3", "reussite_brevet": "71", "note_brevet": "8.2", "mentions_brevet": "49.7"}, {"rang": "108", "college": "Chantemerle", "commune": "Corbeil-Essonnes", "secteur": "Public", "francais": "235", "maths": "225", "distance_km": "8.5", "reussite_brevet": "74", "note_brevet": "8", "mentions_brevet": "51.5"}, {"rang": "109", "college": "Les Sablons", "commune": "Viry-Châtillon", "secteur": "Public", "francais": "239", "maths": "219", "distance_km": "16.2", "reussite_brevet": "71", "note_brevet": "7.9", "mentions_brevet": "45"}, {"rang": "110", "college": "Louise Michel", "commune": "Corbeil-Essonnes", "secteur": "Public", "francais": "230", "maths": "225", "distance_km": "7.6", "reussite_brevet": "72", "note_brevet": "7.5", "mentions_brevet": "47"}, {"rang": "111", "college": "Louis Pasteur", "commune": "Longjumeau", "secteur": "Public", "francais": "225", "maths": "229", "distance_km": "20.7", "reussite_brevet": "76", "note_brevet": "9", "mentions_brevet": "53.4"}, {"rang": "112", "college": "Sédar Senghor", "commune": "Corbeil-Essonnes", "secteur": "Public", "francais": "228", "maths": "225", "distance_km": "9.8", "reussite_brevet": "68", "note_brevet": "8.2", "mentions_brevet": "50"}, {"rang": "113", "college": "Le Village", "commune": "Evry-Courcouronnes", "secteur": "Public", "francais": "226", "maths": "226", "distance_km": "11", "reussite_brevet": "78", "note_brevet": "8.4", "mentions_brevet": "61.8"}, {"rang": "114", "college": "Olivier de Serres", "commune": "Viry-Châtillon", "secteur": "Public", "francais": "233", "maths": "219", "distance_km": "14.8", "reussite_brevet": "81", "note_brevet": "7.7", "mentions_brevet": "61.9"}, {"rang": "115", "college": "Jean Vilar", "commune": "Grigny", "secteur": "Public", "francais": "228", "maths": "222", "distance_km": "14", "reussite_brevet": "82", "note_brevet": "7.9", "mentions_brevet": "46.6"}, {"rang": "116", "college": "Paul Éluard", "commune": "Vigneux-sur-Seine", "secteur": "Public", "francais": "225", "maths": "224", "distance_km": "19.1", "reussite_brevet": "78", "note_brevet": "7.6", "mentions_brevet": "57.3"}, {"rang": "117", "college": "La Nacelle", "commune": "Corbeil-Essonnes", "secteur": "Public", "francais": "229", "maths": "220", "distance_km": "7.3", "reussite_brevet": "69", "note_brevet": "7.9", "mentions_brevet": "44.1"}, {"rang": "118", "college": "Albert Camus", "commune": "Ris-Orangis", "secteur": "Public", "francais": "229", "maths": "219", "distance_km": "13.7", "reussite_brevet": "75", "note_brevet": "8.5", "mentions_brevet": "50.8"}, {"rang": "119", "college": "Paul Éluard", "commune": "Evry-Courcouronnes", "secteur": "Public", "francais": "235", "maths": "207", "distance_km": "10.3", "reussite_brevet": "75", "note_brevet": "8.3", "mentions_brevet": "58.3"}, {"rang": "120", "college": "Georges Pompidou", "commune": "Montgeron", "secteur": "Public", "francais": "225", "maths": "217", "distance_km": "17.9", "reussite_brevet": "93", "note_brevet": "10.1", "mentions_brevet": "75.3"}, {"rang": "121", "college": "Établissement non identifié", "commune": "", "secteur": "Public", "francais": "179", "maths": "184", "distance_km": "", "reussite_brevet": "", "note_brevet": "", "mentions_brevet": ""}], "refs": [{"niveau": "Moyenne nationale", "francais": "256", "maths": "254", "nb_colleges": ""}, {"niveau": "Paris", "francais": "281.9", "maths": "277.0", "nb_colleges": "172"}, {"niveau": "Île-de-France", "francais": "260.6", "maths": "255.3", "nb_colleges": "1145"}, {"niveau": "Essonne", "francais": "253.9", "maths": "248.4", "nb_colleges": "121"}, {"niveau": "Île-de-France : collèges privés", "francais": "290.7", "maths": "287.5", "nb_colleges": "230"}, {"niveau": "Île-de-France : collèges publics", "francais": "253.3", "maths": "247.6", "nb_colleges": "915"}], "histo": [{"college": "Moyenne nationale", "annee": "2022", "francais": "257", "maths": "253"}, {"college": "Moyenne nationale", "annee": "2023", "francais": "257", "maths": "254"}, {"college": "Moyenne nationale", "annee": "2024", "francais": "256", "maths": "254"}, {"college": "Moyenne nationale", "annee": "2025", "francais": "256", "maths": "254"}, {"college": "Olympe de Gouges (Champcueil)", "annee": "2022", "francais": "263", "maths": "247"}, {"college": "Olympe de Gouges (Champcueil)", "annee": "2023", "francais": "253", "maths": "245"}, {"college": "Olympe de Gouges (Champcueil)", "annee": "2024", "francais": "259", "maths": "248"}, {"college": "Olympe de Gouges (Champcueil)", "annee": "2025", "francais": "245", "maths": "238"}, {"college": "Le Parc de Villeroy (Mennecy)", "annee": "2022", "francais": "256", "maths": "253"}, {"college": "Le Parc de Villeroy (Mennecy)", "annee": "2023", "francais": "252", "maths": "244"}, {"college": "Le Parc de Villeroy (Mennecy)", "annee": "2024", "francais": "256", "maths": "250"}, {"college": "Le Parc de Villeroy (Mennecy)", "annee": "2025", "francais": "248", "maths": "246"}, {"college": "Le Saussay (Ballancourt)", "annee": "2022", "francais": "250", "maths": "242"}, {"college": "Le Saussay (Ballancourt)", "annee": "2023", "francais": "255", "maths": "243"}, {"college": "Le Saussay (Ballancourt)", "annee": "2024", "francais": "253", "maths": "248"}, {"college": "Le Saussay (Ballancourt)", "annee": "2025", "francais": "251", "maths": "248"}, {"college": "Saint-Spire (Corbeil)", "annee": "2022", "francais": "284", "maths": "278"}, {"college": "Saint-Spire (Corbeil)", "annee": "2023", "francais": "279", "maths": "278"}, {"college": "Saint-Spire (Corbeil)", "annee": "2024", "francais": "280", "maths": "277"}, {"college": "Saint-Spire (Corbeil)", "annee": "2025", "francais": "285", "maths": "267"}, {"college": "Notre-Dame de Sion (Évry)", "annee": "2022", "francais": "278", "maths": "273"}, {"college": "Notre-Dame de Sion (Évry)", "annee": "2023", "francais": "277", "maths": "271"}, {"college": "Notre-Dame de Sion (Évry)", "annee": "2024", "francais": "278", "maths": "261"}, {"college": "Notre-Dame de Sion (Évry)", "annee": "2025", "francais": "281", "maths": "272"}, {"college": "Jeanne d'Arc (Brétigny)", "annee": "2022", "francais": "287", "maths": "278"}, {"college": "Jeanne d'Arc (Brétigny)", "annee": "2023", "francais": "281", "maths": "278"}, {"college": "Jeanne d'Arc (Brétigny)", "annee": "2024", "francais": "294", "maths": "301"}, {"college": "Jeanne d'Arc (Brétigny)", "annee": "2025", "francais": "285", "maths": "292"}], "brevet": [{"rang": "6", "college": "Jeanne d'Arc", "commune": "Brétigny-sur-Orge", "secteur": "Privé", "nb_candidats": "135", "nb_mentions": "123", "note_ecrit": "13.3", "reussite": "100", "va_note": "", "va_reussite": ""}, {"rang": "15", "college": "Saint-Exupéry", "commune": "Marolles-en-Hurepoix", "secteur": "Public", "nb_candidats": "177", "nb_mentions": "119", "note_ecrit": "10.2", "reussite": "88", "va_note": "-1.6", "va_reussite": "-4"}, {"rang": "17", "college": "Notre-Dame de Sion", "commune": "Evry-Courcouronnes", "secteur": "Privé", "nb_candidats": "224", "nb_mentions": "211", "note_ecrit": "12.4", "reussite": "98", "va_note": "0.3", "va_reussite": "2"}, {"rang": "18", "college": "Saint-Spire", "commune": "Corbeil-Essonnes", "secteur": "Privé", "nb_candidats": "240", "nb_mentions": "213", "note_ecrit": "12.4", "reussite": "97", "va_note": "-0.2", "va_reussite": "1"}, {"rang": "51", "college": "Le Saussay", "commune": "Ballancourt-sur-Essonne", "secteur": "Public", "nb_candidats": "179", "nb_mentions": "111", "note_ecrit": "9.4", "reussite": "77", "va_note": "-1.1", "va_reussite": "-11"}, {"rang": "57", "college": "Le Parc de Villeroy", "commune": "Mennecy", "secteur": "Public", "nb_candidats": "264", "nb_mentions": "179", "note_ecrit": "10.3", "reussite": "87", "va_note": "-0.5", "va_reussite": "-1"}, {"rang": "77", "college": "Olympe de Gouges", "commune": "Champcueil", "secteur": "Public", "nb_candidats": "148", "nb_mentions": "106", "note_ecrit": "10.4", "reussite": "87", "va_note": "-0.7", "va_reussite": "-4"}], "refs_brevet": [{"niveau": "Moyenne nationale", "note_ecrit": "10.93", "reussite": "87.1", "mentions_pct": "72.2", "nb_colleges": "6816"}, {"niveau": "Paris", "note_ecrit": "12.55", "reussite": "91.9", "mentions_pct": "83.5", "nb_colleges": "171"}, {"niveau": "Île-de-France", "note_ecrit": "10.82", "reussite": "84.5", "mentions_pct": "70.1", "nb_colleges": "1127"}, {"niveau": "Essonne", "note_ecrit": "10.11", "reussite": "82.3", "mentions_pct": "65.8", "nb_colleges": "119"}]};
+  var calcs = {}, cache = {}, subs = [];
+  function get(id){ if (id in cache) return cache[id];
+    if (RAW[id]) return cache[id] = RAW[id];
+    var c = calcs[id]; if (!c) return null;
+    return cache[id] = c.fn.apply(null, c.inputs.map(get)); }
+  function run(){ subs.forEach(function(f){ try{ f(); } catch(e){ console.error(e); } }); }
+  window.dash = {
+    colors: ['#3b6fd8', '#d9822b', '#2a9d8f', '#8e5bd0', '#c94f7c', '#6b8e23', '#b07d2b', '#5a6b7b'],
+    calc: function(id, o){ calcs[id] = o; }, loader: function(){},
+    data: function(id){ var d = get(id); return d == null ? {status:'missing', data:[]} : {status:'ok', data:d, columns: Array.isArray(d) && d[0] ? Object.keys(d[0]) : [], meta:[]}; },
+    onData: function(fn){ subs.push(fn); },
+    refresh: function(){}, params: function(){ return {}; }, setParams: function(){}, resetParams: function(){}, setLink: function(){}
+  };
+  window.addEventListener('load', run);
+  var t; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(run, 150); });
+})();</script>
+</head><body><div id="dash-root">
+<style>
+.cx { font-family: var(--font-anthropic-sans); color: var(--color-fg); max-width: 72rem; margin-inline: auto; }
+.cx h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0 0 var(--cds-gap-xs); }
+.cx h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-xl) 0 var(--cds-gap-sm); }
+.cx h3 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.cx p { margin: 0 0 var(--cds-gap-sm); line-height: 1.5; }
+.cx .muted { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.cx .lead { font-size: var(--cds-font-size-body); max-width: 52rem; }
+.cx .lead b, .cx .card b { font-weight: var(--cds-font-weight-medium); }
+.cx .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cds-gap-md); }
+.cx .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: var(--cds-gap-md); }
+.cx .card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); position: relative; }
+.cx .kpi-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-xs); }
+.cx .kpi { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.cx .kpi-sub { font-size: var(--cds-font-size-caption); margin-top: var(--cds-gap-xs); font-variant-numeric: tabular-nums; }
+.cx .up { color: var(--color-ok); } .cx .down { color: var(--color-bad); }
+.cx .chart { min-height: 300px; position: relative; }
+.cx .chart svg { display: block; }
+.cx .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); display: none; z-index: 5; white-space: nowrap; }
+.cx .tip .t1 { color: var(--cds-text-secondary); }
+.cx .opt h3 { margin-bottom: var(--cds-gap-xs); }
+.cx .tag { display: inline-block; font-size: var(--cds-font-size-caption); padding: 0 var(--cds-pad-sm); border-radius: var(--cds-radius); border: 1px solid var(--color-border-line); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.cx ul { margin: 0; padding-left: 1.1rem; line-height: 1.5; }
+.cx .tablebox { max-height: 30rem; overflow: auto; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+.cx table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.cx th { position: sticky; top: 0; background: var(--color-panel); text-align: left; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+.cx th button { all: unset; cursor: pointer; font-weight: var(--cds-font-weight-medium); }
+.cx td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+.cx td.num, .cx th.num { text-align: right; }
+.cx tr.hl td { font-weight: var(--cds-font-weight-medium); background: color-mix(in srgb, var(--cx-accent) 14%, var(--color-bg)); }
+.cx tr.hl td:first-child { box-shadow: inset 4px 0 0 var(--cx-accent); }
+.cx tr.hl.secteur td { background: color-mix(in srgb, var(--cx-accent2) 18%, var(--color-bg)); }
+.cx tr.hl.secteur td:first-child { box-shadow: inset 4px 0 0 var(--cx-accent2); }
+.cx tr.hl td:nth-child(2)::after { content: "Option"; display: inline-block; margin-left: var(--cds-gap-xs); padding: 0 var(--cds-pad-sm); border-radius: 999px; font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); color: var(--color-bg); background: var(--cx-accent); }
+.cx tr.hl.secteur td:nth-child(2)::after { background: var(--cx-accent2); }
+.cx tr.hl.home td:nth-child(2)::after { content: "Notre secteur"; }
+.cx .tools { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; margin-bottom: var(--cds-gap-sm); }
+.cx .tools .search { margin: 0; }
+.cx .toggle { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-radius: 999px; border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); cursor: pointer; }
+.cx .toggle[aria-pressed=true] { background: var(--cx-accent); color: var(--color-bg); border-color: var(--cx-accent); }
+.cx .pc-head, .cx .pc-row { display: grid; grid-template-columns: minmax(9rem, 1.2fr) 1fr 1fr minmax(6rem, .5fr) minmax(9rem, .75fr); gap: var(--cds-gap-md); align-items: center; }
+.cx .pc-head { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding-bottom: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
+.cx .pc-row { padding: var(--cds-gap-sm) 0; border-bottom: 1px solid var(--color-border-line); }
+.cx .pc-row:last-child { border-bottom: 0; }
+.cx .pc-name { font-weight: var(--cds-font-weight-medium); }
+.cx .pc-name .muted { display: block; font-weight: 400; }
+.cx .bar { position: relative; height: 22px; }
+.cx .bar::before { content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px; border-left: 1.5px dashed var(--cds-chart-reference); }
+.cx .bar i { position: absolute; top: 5px; height: 12px; border-radius: 4px; }
+.cx .bar span { position: absolute; top: 2px; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cx .pc-big { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.cx .pc-delta { font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.cx .va { display: inline-block; max-width: 100%; box-sizing: border-box; font-size: var(--cds-font-size-caption); padding: 1px var(--cds-pad-sm); border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.cx .pc-lab { display: none; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+@media (max-width: 640px) {
+  .cx .pc-head { display: none; }
+  .cx .pc-row { grid-template-columns: 1fr; gap: var(--cds-gap-xs); }
+  .cx .pc-lab { display: block; }
+}
+.cx .search { width: 100%; max-width: 20rem; box-sizing: border-box; padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); font: inherit; margin-bottom: var(--cds-gap-sm); }
+.cx [data-dash-source-state=empty] { color: transparent; }
+.cx [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.cx .fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.cx .fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.cx .howto { border-left: 3px solid var(--cx-accent); background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); margin: var(--cds-gap-sm) 0 var(--cds-gap-md); font-size: var(--cds-font-size-caption); }
+.cx .howto-t { font-weight: var(--cds-font-weight-medium); margin-bottom: var(--cds-gap-xs); }
+.cx .howto b { font-weight: var(--cds-font-weight-medium); }
+.cx .chips { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-lg); margin-bottom: var(--cds-gap-md); }
+.cx .chip-grp { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; }
+.cx .chip-lab { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-right: var(--cds-gap-xs); }
+@media (max-width: 560px) {
+  .cx #tbl th:nth-child(4), .cx #tbl td:nth-child(4), .cx #tbl th:nth-child(9), .cx #tbl td:nth-child(9), .cx #tbl th:nth-child(10), .cx #tbl td:nth-child(10) { display: none; }
+  .cx .card { padding: var(--cds-pad-md); }
+  .cx .kpi { font-size: var(--cds-font-size-heading); }
+}
+</style>
+
+<div class="cx">
+  <h1 id="titre">Quel collège pour la rentrée en 6e ?</h1>
+  <p class="lead" id="takeaway">
+    Notre collège de secteur, <b>Olympe de Gouges à Champcueil</b>, est
+    <b><span data-source="selection" data-field="rang_essonne" data-where="rang=77" class="dash-skeleton">—</span>e sur <span data-source="stats" data-field="total" class="dash-skeleton">—</span></b> en Essonne, à
+    <b class="down"><span data-source="selection" data-field="ecart" data-where="rang=77" class="dash-skeleton">—</span> points</b> de la moyenne nationale.
+    Les deux collèges privés les plus proches, <b>Saint-Spire</b> (Corbeil) et <b>Notre-Dame de Sion</b> (Évry), sont dans le haut du classement, à
+    <b class="up"><span data-source="selection" data-field="ecart" data-where="rang=18" class="dash-skeleton">—</span></b> et
+    <b class="up"><span data-source="selection" data-field="ecart" data-where="rang=17" class="dash-skeleton">—</span> points</b>.
+  </p>
+  <p class="muted">Score moyen des élèves aux évaluations nationales d'entrée en 6e (français et maths), rentrée de septembre 2025, source ministère de l'Éducation nationale. Nous habitons Chevannes, sans déménagement.</p>
+
+  <div class="grid" id="kpis" style="margin-top: var(--cds-gap-lg)">
+    <div class="card">
+      <div class="kpi-label">Moyenne nationale · entrée en 6e, français / maths</div>
+      <div class="kpi"><span data-source="refs" data-field="francais" data-where="niveau=Moyenne%20nationale" class="dash-skeleton">—</span> / <span data-source="refs" data-field="maths" data-where="niveau=Moyenne%20nationale" class="dash-skeleton">—</span></div>
+      <div class="kpi-sub muted">Brevet : <span data-source="refs_brevet" data-field="reussite" data-where="niveau=Moyenne%20nationale">—</span> % de reçus</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">Champcueil · notre secteur</div>
+      <div class="kpi"><span data-source="selection" data-field="francais" data-where="rang=77" class="dash-skeleton">—</span> / <span data-source="selection" data-field="maths" data-where="rang=77" class="dash-skeleton">—</span></div>
+      <div class="kpi-sub"><span class="down"><span data-source="selection" data-field="ecart" data-where="rang=77">—</span> pts</span> <span class="muted">vs national</span></div>
+      <div class="kpi-sub muted">Brevet : <span data-source="selection" data-field="reussite_brevet" data-where="rang=77">—</span> % de reçus</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">Saint-Spire · Corbeil (privé)</div>
+      <div class="kpi"><span data-source="selection" data-field="francais" data-where="rang=18" class="dash-skeleton">—</span> / <span data-source="selection" data-field="maths" data-where="rang=18" class="dash-skeleton">—</span></div>
+      <div class="kpi-sub"><span class="up"><span data-source="selection" data-field="ecart" data-where="rang=18">—</span> pts</span> <span class="muted">vs national</span></div>
+      <div class="kpi-sub muted">Brevet : <span data-source="selection" data-field="reussite_brevet" data-where="rang=18">—</span> % de reçus</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">Notre-Dame de Sion · Évry (privé)</div>
+      <div class="kpi"><span data-source="selection" data-field="francais" data-where="rang=17" class="dash-skeleton">—</span> / <span data-source="selection" data-field="maths" data-where="rang=17" class="dash-skeleton">—</span></div>
+      <div class="kpi-sub"><span class="up"><span data-source="selection" data-field="ecart" data-where="rang=17">—</span> pts</span> <span class="muted">vs national</span></div>
+      <div class="kpi-sub muted">Brevet : <span data-source="selection" data-field="reussite_brevet" data-where="rang=17">—</span> % de reçus</div>
+    </div>
+  </div>
+
+  <h2 id="essonne">Où se situent les collèges de l'Essonne</h2>
+  <div class="card">
+    <h3>Le niveau d'entrée en 6e de tous les collèges du département</h3>
+    <div class="howto">
+      <div class="howto-t">Comment lire ce schéma</div>
+      <ul>
+        <li>Chaque point est un collège de l'Essonne, placé selon le niveau moyen de ses élèves à l'entrée en 6e (français et maths).</li>
+        <li>Plus un point est <b>à droite</b>, meilleur est le niveau.</li>
+        <li>Le <b>trait pointillé</b> marque la moyenne nationale, le pointillé fin la moyenne de l'Île-de-France.</li>
+        <li>En haut les collèges privés, en bas les publics. <b>En couleur</b>, nos options, avec leur écart à la moyenne nationale.</li>
+        <li>Les boutons permettent de ne garder que les privés ou les publics, ou seulement les collèges à moins de 15 km.</li>
+      </ul>
+    </div>
+    <p class="muted">
+      <span data-source="stats" data-field="au_dessus" class="dash-skeleton">—</span> collèges sur <span data-source="stats" data-field="total">—</span> sont au-dessus de la moyenne nationale :
+      <span data-source="stats" data-field="prives_au_dessus">—</span> privés sur <span data-source="stats" data-field="prives">—</span>, mais seulement
+      <span data-source="stats" data-field="publics_au_dessus">—</span> publics sur <span data-source="stats" data-field="publics">—</span>.
+      Un établissement spécialisé non identifié, très en dessous, n'est pas affiché.</p>
+    <div class="chart" id="strip" data-source="colleges refs" style="min-height: 340px"></div>
+  </div>
+
+  <h2 id="comparatif">Nos options face aux moyennes de référence</h2>
+  <div class="card">
+    <h3>Français et maths, collège par collège</h3>
+    <div class="howto">
+      <div class="howto-t">Comment lire ce schéma</div>
+      <ul>
+        <li>Une ligne par collège, avec deux points : son score en <b>français</b> et son score en <b>maths</b>. Plus c'est à droite, mieux c'est.</li>
+        <li>Plus les deux points sont éloignés, plus le collège est déséquilibré entre les deux matières.</li>
+        <li>Les lignes en italique, aux points vides, sont des moyennes de référence : France, Paris, Île-de-France, Essonne.</li>
+        <li>Le <b>trait pointillé vertical</b> marque la moyenne nationale.</li>
+        <li>Les boutons filtrent les collèges (privés ou publics) et masquent ou affichent les moyennes de référence.</li>
+      </ul>
+    </div>
+    <div class="chart" id="dumbbell" data-source="comparatif" style="min-height: 420px"></div>
+  </div>
+
+  <h2 id="evolution">Est-ce stable dans le temps ?</h2>
+  <div class="card">
+    <h3>Niveau d'entrée en 6e, rentrées 2022 à 2025</h3>
+    <div class="howto">
+      <div class="howto-t">Comment lire ce schéma</div>
+      <ul>
+        <li>Chaque ligne suit un collège d'une rentrée à l'autre (moyenne français et maths). Plus elle est haute, meilleur est le niveau.</li>
+        <li>La <b>ligne en pointillés</b> est la moyenne nationale ; les privés et les publics ont chacun leur couleur.</li>
+        <li>Par défaut, seuls Champcueil, Saint-Spire et Notre-Dame de Sion sont affichés : ajoutez ou retirez des collèges avec les boutons.</li>
+        <li>À lire : les deux groupes ne se croisent jamais, l'écart est stable d'une année sur l'autre.</li>
+      </ul>
+    </div>
+    <div class="chart" id="lines" data-source="histo_moy" style="min-height: 320px"></div>
+  </div>
+
+  <h2 id="parcours">De l'entrée en 6e au brevet de 3e</h2>
+  <div class="card">
+    <h3>Niveau à l'arrivée, niveau à la sortie</h3>
+    <div class="howto">
+      <div class="howto-t">Comment lire ce schéma</div>
+      <ul>
+        <li>Une ligne par collège. Deux barres partent de la <b>moyenne nationale</b> (le trait pointillé) : vers la droite, mieux que la moyenne ; vers la gauche, moins bien.</li>
+        <li>Première barre : le niveau des élèves <b>à leur arrivée en 6e</b>. Deuxième barre : leur note à l'écrit <b>au brevet</b>, en fin de 3e.</li>
+        <li>Ensuite, le <b>pourcentage d'élèves reçus au brevet</b>, et son écart avec la moyenne nationale en points de pourcentage.</li>
+        <li>La pastille <b>valeur ajoutée</b> dit si le collège fait progresser ses élèves plus ou moins que ce que le ministère attendait, vu leur profil. Un léger écart négatif (jusqu'à −0,3 point) est classé « comme prévu ».</li>
+        <li>Repère : au brevet 2025 (série générale), la moyenne nationale à l'écrit est de <span data-source="refs_brevet" data-field="note_ecrit" data-where="niveau=Moyenne%20nationale" class="dash-skeleton">—</span>/20, avec
+      <span data-source="refs_brevet" data-field="reussite" data-where="niveau=Moyenne%20nationale" class="dash-skeleton">—</span> % de reçus.</li>
+      </ul>
+    </div>
+    <div id="pc" data-source="parcours" style="min-height: 360px">
+      <div class="pc-head"><div>Collège</div><div>Entrée en 6e · écart en points</div><div>Brevet à l'écrit · écart en points sur 20</div><div>Reçus au brevet</div><div>Valeur ajoutée</div></div>
+      <div id="pc-rows"></div>
+    </div>
+  </div>
+
+  <h2 id="options">Ce qu'on en retient</h2>
+  <div class="grid2">
+    <div class="card opt">
+      <h3>Saint-Spire · Corbeil</h3>
+      <span class="tag">Privé · environ <span data-source="selection" data-field="distance_km" data-where="rang=18">—</span> km</span>
+      <ul>
+        <li>Le meilleur compromis niveau / trajet</li>
+        <li>Très fort en français, un peu moins en maths</li>
+        <li>Sur l'axe Mennecy – Corbeil, pratique pour les trajets</li>
+        <li>Brevet : parmi les meilleurs résultats, conformes au niveau de ses élèves</li>
+      </ul>
+    </div>
+    <div class="card opt">
+      <h3>Notre-Dame de Sion · Évry</h3>
+      <span class="tag">Privé · environ <span data-source="selection" data-field="distance_km" data-where="rang=17">—</span> km</span>
+      <ul>
+        <li>Même niveau que Saint-Spire, plus équilibré entre français et maths</li>
+        <li>Un peu plus loin, trajet par Évry</li>
+        <li>Brevet : le seul de nos options à faire mieux que ce qu'on attendait de ses élèves</li>
+      </ul>
+    </div>
+    <div class="card opt">
+      <h3>Jeanne d'Arc · Brétigny</h3>
+      <span class="tag">Privé · environ <span data-source="selection" data-field="distance_km" data-where="rang=6">—</span> km</span>
+      <ul>
+        <li>Le meilleur niveau à portée, surtout en maths</li>
+        <li>Logistique compliquée depuis Chevannes : pas de liaison directe</li>
+        <li>Brevet : la meilleure note à l'écrit et tous les élèves reçus</li>
+      </ul>
+    </div>
+    <div class="card opt">
+      <h3>Olympe de Gouges · Champcueil</h3>
+      <span class="tag">Public · notre secteur · <span data-source="selection" data-field="distance_km" data-where="rang=77">—</span> km</span>
+      <ul>
+        <li>Tout près, aucune démarche</li>
+        <li>Sous la moyenne nationale, et en baisse à la dernière rentrée</li>
+        <li>Brevet : un peu sous la moyenne nationale, et moins bien que ce qu'on attendait de ses élèves</li>
+        <li>Mennecy et Ballancourt ne font pas mieux ; une dérogation n'apporterait rien</li>
+      </ul>
+    </div>
+  </div>
+  <p class="muted" style="margin-top: var(--cds-gap-md)">À savoir : ces scores mesurent le niveau des élèves à leur arrivée au collège, avant tout enseignement. Ils disent surtout avec qui notre fils sera en classe ; dans le privé, la sélection à l'entrée explique une partie de l'écart. Pour le privé, les dossiers de 6e se déposent souvent dès l'automne ou l'hiver du CM2. Distances à vol d'oiseau depuis Chevannes.</p>
+
+  <h2 id="tableau">Les collèges de l'Essonne</h2>
+  <div class="card">
+    <div class="tools">
+      <input class="search" id="q" type="search" placeholder="Chercher un collège ou une commune">
+      <button class="toggle" id="only" aria-pressed="false">Nos options seulement</button>
+    </div>
+    <p class="muted">En couleur, les collèges que nous étudions ; le reste du département reste visible pour comparer.</p>
+    <div class="tablebox">
+      <table id="tbl" data-source="colleges" data-row-key="rang">
+        <thead><tr>
+          <th class="num" data-field="rang"><button data-k="rang" data-num="1">Rang</button></th>
+          <th data-field="college"><button data-k="college">Collège</button></th>
+          <th data-field="commune"><button data-k="commune">Commune</button></th>
+          <th data-field="secteur"><button data-k="secteur">Secteur</button></th>
+          <th class="num" data-field="francais"><button data-k="francais" data-num="1">Français</button></th>
+          <th class="num" data-field="maths"><button data-k="maths" data-num="1">Maths</button></th>
+          <th class="num" data-source="ecarts" data-field="ecart"><button data-k="ecart" data-num="1">Écart vs national</button></th>
+          <th class="num" data-field="reussite_brevet"><button data-k="reussite_brevet" data-num="1">Reçus au brevet (%)</button></th>
+          <th class="num" data-field="note_brevet"><button data-k="note_brevet" data-num="1">Brevet écrit /20</button></th>
+          <th class="num" data-field="distance_km"><button data-k="distance_km" data-num="1">Distance (km)</button></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+dash.calc('selection', {
+  inputs: ['colleges', 'refs'],
+  title: 'Collèges étudiés',
+  description: 'Les sept collèges envisagés, avec leur moyenne français-maths et l’écart à la moyenne nationale.',
+  fn: (colleges, refs) => {
+    const nat = refs.find(r => r.niveau === 'Moyenne nationale');
+    const n = (Number(nat.francais) + Number(nat.maths)) / 2;
+    const ids = ['6', '15', '17', '18', '51', '57', '77'];
+    return colleges.filter(c => ids.includes(String(c.rang))).map(c => {
+      const m = (Number(c.francais) + Number(c.maths)) / 2;
+      return { rang: String(c.rang), rang_essonne: Number(c.rang), college: c.college, commune: c.commune, secteur: c.secteur,
+        francais: Number(c.francais), maths: Number(c.maths), moyenne: m, ecart: Math.round((m - n) * 10) / 10, distance_km: Number(c.distance_km), reussite_brevet: Number(c.reussite_brevet) };
+    });
+  }
+});
+
+dash.calc('ecarts', {
+  inputs: ['colleges', 'refs'],
+  title: 'Écart à la moyenne nationale',
+  description: 'Pour chaque collège, sa moyenne français-maths moins la moyenne nationale.',
+  fn: (colleges, refs) => {
+    const nat = refs.find(r => r.niveau === 'Moyenne nationale');
+    const n = (Number(nat.francais) + Number(nat.maths)) / 2;
+    return colleges.map(c => ({ rang: String(c.rang), ecart: Math.round(((Number(c.francais) + Number(c.maths)) / 2 - n) * 10) / 10 }));
+  }
+});
+
+dash.calc('stats', {
+  inputs: ['colleges', 'refs'],
+  title: 'Collèges au-dessus du national',
+  description: 'Nombre de collèges de l’Essonne dont la moyenne français-maths dépasse la moyenne nationale.',
+  fn: (colleges, refs) => {
+    const nat = refs.find(r => r.niveau === 'Moyenne nationale');
+    const n = (Number(nat.francais) + Number(nat.maths)) / 2;
+    const above = c => (Number(c.francais) + Number(c.maths)) / 2 > n;
+    const pri = colleges.filter(c => c.secteur === 'Privé'), pub = colleges.filter(c => c.secteur === 'Public');
+    return { total: colleges.length, au_dessus: colleges.filter(above).length,
+      prives: pri.length, prives_au_dessus: pri.filter(above).length,
+      publics: pub.length, publics_au_dessus: pub.filter(above).length };
+  }
+});
+
+dash.calc('comparatif', {
+  inputs: ['selection', 'refs'],
+  title: 'Options et moyennes de référence',
+  description: 'Les collèges envisagés et les moyennes nationale, Île-de-France, Paris et Essonne, triés par moyenne.',
+  fn: (selection, refs) => {
+    const keep = ['Moyenne nationale', 'Paris', 'Île-de-France', 'Essonne'];
+    const r = refs.filter(x => keep.includes(x.niveau)).map(x => ({ libelle: x.niveau, type: 'reference',
+      francais: Number(x.francais), maths: Number(x.maths), moyenne: (Number(x.francais) + Number(x.maths)) / 2 }));
+    const s = selection.map(x => ({ libelle: x.college + ' · ' + x.commune, type: x.secteur, francais: x.francais, maths: x.maths, moyenne: x.moyenne }));
+    return s.concat(r).sort((a, b) => b.moyenne - a.moyenne);
+  }
+});
+
+dash.calc('histo_moy', {
+  inputs: ['histo'],
+  title: 'Moyenne par rentrée',
+  description: 'Moyenne français-maths de chaque collège envisagé et de la France, rentrées 2022 à 2025.',
+  fn: (histo) => histo.map(h => ({ college: h.college, annee: Number(h.annee), moyenne: (Number(h.francais) + Number(h.maths)) / 2 }))
+});
+
+window.cxFmt = v => (Number(v)).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+window.cxSigned = v => (Number(v)).toLocaleString('fr-FR', { maximumFractionDigits: 1, signDisplay: 'always' });
+window.cxFail = (el, st) => { el.innerHTML = ''; if (st === 'error') { const d = document.createElement('div'); d.className = 'fail'; d.textContent = 'Failed to load'; el.appendChild(d); } };
+window.cxTip = (box) => { let t = box.querySelector('.tip'); if (!t) { t = document.createElement('div'); t.className = 'tip'; box.appendChild(t); } return t; };
+window.cxNearest = (svg, box, pts, show, radius) => {
+  const del = d3.Delaunay.from(pts, p => p.x, p => p.y);
+  const ring = svg.append('circle').attr('r', 9).attr('fill', 'none').attr('stroke', 'var(--color-fg)').attr('stroke-width', 1.5).style('display', 'none').style('pointer-events', 'none');
+  const tip = cxTip(box);
+  const handle = ev => {
+    const [sx, sy] = d3.pointer(ev, svg.node());
+    const vb = svg.node().viewBox.baseVal, k = vb && vb.width ? vb.width / svg.node().getBoundingClientRect().width : 1;
+    const i = del.find(sx * k, sy * k), p = pts[i];
+    if (!p || Math.hypot(p.x - sx * k, p.y - sy * k) > (radius || 28)) { tip.style.display = 'none'; ring.style('display', 'none'); return; }
+    ring.attr('cx', p.x).attr('cy', p.y).style('display', null);
+    const [bx, by] = d3.pointer(ev, box); show(p, bx, by, tip);
+  };
+  svg.append('rect').attr('width', '100%').attr('height', '100%').attr('fill', 'transparent').style('cursor', 'pointer')
+    .on('pointermove', handle).on('click', handle)
+    .on('pointerleave', ev => { if (ev.pointerType === 'mouse') { tip.style.display = 'none'; ring.style('display', 'none'); } });
+};
+if (!window.cxDocTap) { window.cxDocTap = true; document.addEventListener('click', ev => { if (!ev.target.closest || !ev.target.closest('.chart')) document.querySelectorAll('.cx .tip').forEach(t => t.style.display = 'none'); }); }
+window.cxShow = (box, tip, lines, x, y) => {
+  tip.innerHTML = ''; lines.forEach((l, i) => { const d = document.createElement('div'); if (i === 0) d.className = 't1'; d.textContent = l; tip.appendChild(d); });
+  tip.style.display = 'block'; const bw = box.clientWidth, tw = tip.offsetWidth;
+  tip.style.left = Math.max(0, Math.min(bw - tw, x - tw / 2)) + 'px'; tip.style.top = Math.max(0, y - tip.offsetHeight - 10) + 'px';
+};
+
+dash.onData(() => {
+  // texte et cartes
+  const fill = (sel, fmt) => {
+    document.querySelectorAll('[data-source="' + sel + '"][data-field]').forEach(el => {
+      const d = dash.data(sel); if (d.status !== 'ok') { el.textContent = '—'; return; }
+      el.classList.remove('dash-skeleton');
+      const rows = Array.isArray(d.data) ? d.data : [d.data];
+      let row = rows[0];
+      const w = el.getAttribute('data-where');
+      if (w) { const [k, v] = w.split('='); row = rows.find(r => String(r[k]) === decodeURIComponent(v)); }
+      if (!row) { el.textContent = '—'; return; }
+      const f = el.getAttribute('data-field'); const v = row[f];
+      const isNum = v !== '' && v != null && !isNaN(Number(v));
+      el.textContent = f === 'ecart' ? cxSigned(v) : (isNum ? Number(v).toLocaleString('fr-FR', { maximumFractionDigits: 2 }) : (v ?? '—'));
+    });
+  };
+  fill('selection'); fill('refs'); fill('stats'); fill('refs_brevet');
+  const root = document.querySelector('.cx');
+  root.style.setProperty('--cx-accent', dash.colors[0]); root.style.setProperty('--cx-accent2', dash.colors[1]);
+});
+</script>
+
+<script>
+window.cxF = window.cxF || { stripSect: 'Tous', stripNear: false, dbRefs: true, dbSect: 'Toutes', lines: null };
+window.cxChips = (box, id, groups) => {
+  let wrap = document.getElementById(id);
+  if (!wrap) { wrap = document.createElement('div'); wrap.id = id; wrap.className = 'chips'; box.parentNode.insertBefore(wrap, box); }
+  wrap.innerHTML = '';
+  for (const g of groups) {
+    const grp = document.createElement('div'); grp.className = 'chip-grp';
+    if (g.label) { const l = document.createElement('span'); l.className = 'chip-lab'; l.textContent = g.label; grp.appendChild(l); }
+    for (const o of g.options) {
+      const b = document.createElement('button'); b.className = 'toggle'; b.type = 'button'; b.textContent = o.text;
+      b.setAttribute('aria-pressed', String(!!o.on)); b.addEventListener('click', o.click); grp.appendChild(b);
+    }
+    wrap.appendChild(grp);
+  }
+};
+</script>
+
+<script>
+(() => {
+  const draw = () => {
+    const box = document.getElementById('strip');
+    const C = dash.data('colleges'), R = dash.data('refs');
+    const F = window.cxF;
+    const redraw = () => draw();
+    cxChips(box, 'strip-chips', [
+      { label: 'Afficher', options: ['Tous', 'Privés', 'Publics'].map(t => ({ text: t, on: F.stripSect === t, click: () => { F.stripSect = t; redraw(); } })) },
+      { label: 'Distance', options: [{ text: 'Moins de 15 km de chez nous', on: F.stripNear, click: () => { F.stripNear = !F.stripNear; redraw(); } }] }
+    ]);
+    if (C.status !== 'ok' || R.status !== 'ok') { cxFail(box, C.status === 'error' || R.status === 'error' ? 'error' : ''); return; }
+    box.innerHTML = '';
+    const nat = R.data.find(r => r.niveau === 'Moyenne nationale');
+    const idf = R.data.find(r => r.niveau === 'Île-de-France');
+    const nM = (Number(nat.francais) + Number(nat.maths)) / 2, iM = (Number(idf.francais) + Number(idf.maths)) / 2;
+    const LABELS = { '6': "Jeanne d'Arc", '15': 'Marolles', '17': 'N.-D. de Sion', '18': 'Saint-Spire', '51': 'Ballancourt', '57': 'Mennecy', '77': 'Champcueil' };
+    const all = C.data.filter(c => c.college !== 'Établissement non identifié' || c.secteur === 'Privé').map(c => ({
+      rang: String(c.rang), nom: c.college, commune: c.commune, secteur: c.secteur, m: (Number(c.francais) + Number(c.maths)) / 2,
+      fr: Number(c.francais), ma: Number(c.maths), km: c.distance_km === '' ? null : Number(c.distance_km) }));
+    let rows = all;
+    if (F.stripNear) rows = rows.filter(r => r.km != null && r.km <= 15);
+    const lanes = F.stripSect === 'Privés' ? ['Privé'] : F.stripSect === 'Publics' ? ['Public'] : ['Privé', 'Public'];
+    rows = rows.filter(r => lanes.includes(r.secteur));
+    const W = box.clientWidth, narrow = W < 520;
+    const laneH = 46, gap = 18, mL = narrow ? 50 : 60, mR = 12, axisH = 28, lh = 17;
+    const x = d3.scaleLinear([d3.min(all, d => d.m) - 3, d3.max(all, d => d.m) + 3], [mL, W - mR]);
+    const svg = d3.select(box).append('svg').attr('width', '100%');
+    const hl = rows.filter(r => LABELS[r.rang]).sort((a, b) => a.m - b.m), rest = rows.filter(r => !LABELS[r.rang]);
+    const lab = d => narrow ? LABELS[d.rang] : LABELS[d.rang] + ' ' + cxSigned(Math.round((d.m - nM) * 10) / 10);
+    // placer les étiquettes avant de dimensionner
+    const lv = { 'Privé': [], 'Public': [] }, place = [];
+    const gl = svg.append('g'), g = svg.append('g');
+    for (const d of hl) {
+      const t = g.append('text').style('font-size', 'var(--cds-font-size-caption)').attr('fill', 'var(--color-fg)').attr('stroke', 'var(--color-panel)').attr('stroke-width', 4).attr('stroke-linejoin', 'round').attr('paint-order', 'stroke').text(lab(d));
+      const tw = t.node().getComputedTextLength();
+      const tx = Math.max(2, Math.min(W - mR - tw, x(d.m) - tw / 2));
+      const levels = lv[d.secteur]; let L = 0; while (levels[L] !== undefined && levels[L] > tx - 6) L++; levels[L] = tx + tw;
+      place.push({ d, t, tx, L });
+    }
+    const top = lanes[0] === 'Privé' ? 30 + Math.max(1, lv['Privé'].length) * lh : 30;
+    const laneY = {}; let yy = top;
+    lanes.forEach(k => { laneY[k] = yy + laneH / 2; yy += laneH + gap; });
+    const below = lanes.includes('Public') ? 10 + Math.max(1, lv['Public'].length) * lh : 0;
+    const H = yy - gap + below + axisH;
+    svg.attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+    box.style.minHeight = H + 'px';
+    const ax = svg.insert('g', ':first-child').attr('transform', `translate(0,${H - axisH + 6})`).call(d3.axisBottom(x).ticks(Math.max(3, Math.floor(W / 90))).tickSize(0)).attr('font-size', null).attr('font-family', null);
+    ax.select('.domain').attr('stroke', 'var(--cds-chart-axis)');
+    ax.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').attr('dy', '1em');
+    const bg = svg.insert('g', () => gl.node());
+    lanes.forEach(k => {
+      bg.append('line').attr('x1', mL).attr('x2', W - mR).attr('y1', laneY[k]).attr('y2', laneY[k]).attr('stroke', 'var(--cds-chart-grid)');
+      bg.append('text').attr('x', 0).attr('y', laneY[k]).attr('dy', '0.35em').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text(k === 'Privé' ? 'Privés' : 'Publics');
+    });
+    [[nM, narrow ? 'France' : 'National'], [iM, 'IDF']].forEach(([v, l], i) => {
+      bg.append('line').attr('x1', x(v)).attr('x2', x(v)).attr('y1', 14).attr('y2', H - axisH).attr('stroke', i ? 'var(--cds-chart-muted)' : 'var(--cds-chart-reference)').attr('stroke-dasharray', i ? '2 3' : '4 3').attr('stroke-width', 1.5);
+      bg.append('text').attr('x', x(v) + (i ? 4 : -4)).attr('y', 10).attr('text-anchor', i ? 'start' : 'end').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text(l);
+    });
+    const jit = r => ((Number(r.rang) * 37) % 13 - 6) * (laneH / 15);
+    const tip = cxTip(box);
+    bg.append('g').selectAll('circle').data(rest).join('circle').attr('cx', d => x(d.m)).attr('cy', d => laneY[d.secteur] + jit(d)).attr('r', 4)
+      .attr('fill', 'var(--cds-chart-muted)').attr('opacity', .7);
+    for (const p of place) {
+      const cx = x(p.d.m), cy = laneY[p.d.secteur] + jit(p.d), up = p.d.secteur === 'Privé';
+      const ty = up ? top - 8 - p.L * lh : laneY['Public'] + laneH / 2 + 16 + p.L * lh;
+      p.t.attr('x', p.tx).attr('y', ty);
+      gl.append('line').attr('x1', cx).attr('x2', cx).attr('y1', cy).attr('y2', up ? ty + 4 : ty - 11).attr('stroke', dash.colors[0]).attr('stroke-width', 1);
+    }
+    svg.append('g').selectAll('circle').data(hl).join('circle').attr('cx', d => x(d.m)).attr('cy', d => laneY[d.secteur] + jit(d)).attr('r', 6)
+      .attr('fill', dash.colors[0]).attr('stroke', 'var(--color-panel)').attr('stroke-width', 1.5);
+    const pts = rows.map(d => ({ d, x: x(d.m), y: laneY[d.secteur] + jit(d) }));
+    cxNearest(svg, box, pts, (p, bx, by, t) => { const d = p.d; cxShow(box, t, [d.nom + ' · ' + d.commune, d.secteur + ' · ' + d.rang + 'e en Essonne', 'Français ' + cxFmt(d.fr) + ' · Maths ' + cxFmt(d.ma), 'Écart vs national ' + cxSigned(Math.round((d.m - nM) * 10) / 10)], bx, by); }, 24);
+  };
+  dash.onData(draw);
+})();
+</script>
+
+<script>
+(() => {
+  const short = (s, w) => w < 520 ? s.split(' · ')[0] : s;
+  const draw = () => {
+    const box = document.getElementById('dumbbell');
+    const D = dash.data('comparatif'); const F = window.cxF;
+    cxChips(box, 'db-chips', [
+      { label: 'Collèges', options: ['Toutes', 'Privés', 'Publics'].map(t => ({ text: t === 'Toutes' ? 'Toutes nos options' : t, on: F.dbSect === t, click: () => { F.dbSect = t; draw(); } })) },
+      { label: 'Repères', options: [{ text: 'Moyennes de référence', on: F.dbRefs, click: () => { F.dbRefs = !F.dbRefs; draw(); } }] }
+    ]);
+    if (D.status !== 'ok') { cxFail(box, D.status === 'error' ? 'error' : ''); return; }
+    box.innerHTML = '';
+    const natRow = D.data.find(r => r.libelle === 'Moyenne nationale');
+    const rows = D.data.filter(r => r.type === 'reference' ? (F.dbRefs || r === natRow) :
+      (F.dbSect === 'Toutes' || (F.dbSect === 'Privés' ? r.type === 'Privé' : r.type === 'Public')));
+    const W = box.clientWidth, rowH = 34, top = 28, axisH = 24;
+    const svg = d3.select(box).append('svg').attr('width', '100%');
+    const meas = svg.append('g');
+    const maxL = W * (W < 520 ? 0.42 : 0.45);
+    const labels = rows.map(r => {
+      let s = short(r.libelle, W);
+      const t = meas.append('text').style('font-size', 'var(--cds-font-size-caption)').text(s);
+      while (t.node().getComputedTextLength() > maxL - 12 && s.length > 4) { s = s.slice(0, -2); t.text(s + '…'); }
+      const w = t.node().getComputedTextLength(); const out = t.text(); t.remove(); return { s: out, w };
+    });
+    const mL = Math.min(d3.max(labels, l => l.w) + 12, maxL), mR = 16, H = top + rows.length * rowH + axisH;
+    svg.attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+    box.style.minHeight = H + 'px';
+    const lo = d3.min(D.data, r => Math.min(r.francais, r.maths)) - 5, hi = d3.max(D.data, r => Math.max(r.francais, r.maths)) + 5;
+    const x = d3.scaleLinear([lo, hi], [mL, W - mR]);
+    const y = (i) => top + i * rowH + rowH / 2;
+    const ax = svg.append('g').attr('transform', `translate(0,${H - axisH})`).call(d3.axisBottom(x).ticks(Math.max(3, Math.floor((W - mL) / 70))).tickSize(-(H - axisH - top + 6))).attr('font-size', null).attr('font-family', null);
+    ax.select('.domain').remove(); ax.selectAll('line').attr('stroke', 'var(--cds-chart-grid)');
+    ax.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').attr('dy', '1em');
+    if (natRow) svg.append('line').attr('x1', x(natRow.moyenne)).attr('x2', x(natRow.moyenne)).attr('y1', top - 6).attr('y2', H - axisH).attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 3').attr('stroke-width', 1.5);
+    const lg = svg.append('g').attr('transform', `translate(${mL},12)`);
+    [['Français', dash.colors[0]], ['Maths', dash.colors[1]]].forEach(([n, c], i) => {
+      lg.append('circle').attr('cx', i * 90 + 5).attr('cy', 0).attr('r', 5).attr('fill', c);
+      lg.append('text').attr('x', i * 90 + 14).attr('y', 0).attr('dy', '0.35em').style('font-size', 'var(--cds-font-size-caption)').attr('fill', 'var(--color-fg-muted)').text(n);
+    });
+    const tip = cxTip(box);
+    rows.forEach((r, i) => {
+      const ref = r.type === 'reference';
+      svg.append('text').attr('x', mL - 10).attr('y', y(i)).attr('dy', '0.35em').attr('text-anchor', 'end').style('font-size', 'var(--cds-font-size-caption)')
+        .style('font-style', ref ? 'italic' : null).attr('fill', ref ? 'var(--color-fg-muted)' : 'var(--color-fg)').text(labels[i].s);
+      svg.append('line').attr('x1', x(Math.min(r.francais, r.maths))).attr('x2', x(Math.max(r.francais, r.maths))).attr('y1', y(i)).attr('y2', y(i))
+        .attr('stroke', 'var(--cds-chart-muted)').attr('stroke-width', 3).attr('stroke-linecap', 'round');
+      [['francais', 0], ['maths', 1]].forEach(([k, c]) => {
+        svg.append('circle').attr('cx', x(r[k])).attr('cy', y(i)).attr('r', ref ? 5 : 6).attr('fill', ref ? 'var(--color-panel)' : dash.colors[c]).attr('stroke', dash.colors[c]).attr('stroke-width', 2);
+      });
+      svg.append('rect').attr('x', 0).attr('y', y(i) - rowH / 2).attr('width', W).attr('height', rowH).attr('fill', 'transparent')
+        .style('cursor', 'pointer').on('pointermove', show).on('click', show)
+        .on('pointerleave', ev => { if (ev.pointerType === 'mouse') tip.style.display = 'none'; });
+      function show(ev) { const [px, py] = d3.pointer(ev, box); cxShow(box, tip, [r.libelle, 'Français ' + cxFmt(r.francais), 'Maths ' + cxFmt(r.maths), natRow ? 'Écart vs national ' + cxSigned(Math.round((r.moyenne - natRow.moyenne) * 10) / 10) : ''], px, py); }
+    });
+  };
+  dash.onData(draw);
+})();
+</script>
+
+<script>
+(() => {
+  const DEF = ['Moyenne nationale', 'Olympe de Gouges (Champcueil)', 'Saint-Spire (Corbeil)', 'Notre-Dame de Sion (Évry)'];
+  const draw = () => {
+    const box = document.getElementById('lines');
+    const D = dash.data('histo_moy'); const F = window.cxF;
+    if (D.status !== 'ok') { cxFail(box, D.status === 'error' ? 'error' : ''); return; }
+    const names = [...new Set(D.data.map(r => r.college))];
+    if (!F.lines) F.lines = DEF.filter(n => names.includes(n));
+    cxChips(box, 'lines-chips', [
+      { label: 'Collèges affichés', options: names.filter(n => n !== 'Moyenne nationale').map(n => ({ text: n.split(' (')[0], on: F.lines.includes(n),
+        click: () => { F.lines = F.lines.includes(n) ? F.lines.filter(x => x !== n) : F.lines.concat(n); draw(); } })) }
+    ]);
+    box.innerHTML = '';
+    const rows = D.data.filter(r => r.college === 'Moyenne nationale' || F.lines.includes(r.college));
+    const groups = d3.group(rows, r => r.college);
+    const W = box.clientWidth, narrow = W < 520, H = 320, top = 16, bottom = 28, mL = 36;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+    const endLab = (k, v) => (k === 'Moyenne nationale' ? 'National' : (narrow ? k.split(' (')[0] : k)) + ' ' + cxFmt(v);
+    const lastOf = k => { const vs = rows.filter(r => r.college === k).sort((a, b) => a.annee - b.annee); return vs[vs.length - 1]; };
+    let lw = 0; for (const k of groups.keys()) { const t = svg.append('text').style('font-size', 'var(--cds-font-size-caption)').text(endLab(k, lastOf(k).moyenne)); lw = Math.max(lw, t.node().getComputedTextLength()); t.remove(); }
+    const labW = Math.min(lw + 14, W * 0.45);
+    const years = [...new Set(D.data.map(r => r.annee))].sort();
+    const x = d3.scalePoint(years, [mL, W - labW]);
+    const y = d3.scaleLinear([d3.min(D.data, r => r.moyenne) - 4, d3.max(D.data, r => r.moyenne) + 4], [H - bottom, top]);
+    const ya = svg.append('g').attr('transform', `translate(${mL},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(W - labW - mL))).attr('font-size', null).attr('font-family', null);
+    ya.select('.domain').remove(); ya.selectAll('line').attr('stroke', 'var(--cds-chart-grid)'); ya.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)');
+    const xa = svg.append('g').attr('transform', `translate(0,${H - bottom})`).call(d3.axisBottom(x).tickSize(0).tickFormat(d => String(d))).attr('font-size', null).attr('font-family', null);
+    xa.select('.domain').attr('stroke', 'var(--cds-chart-axis)'); xa.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').attr('dy', '1.2em');
+    const privates = ['Saint-Spire', 'Notre-Dame', "Jeanne d'Arc"];
+    const color = k => k === 'Moyenne nationale' ? 'var(--cds-chart-reference)' : (privates.some(p => k.startsWith(p)) ? dash.colors[0] : dash.colors[1]);
+    const line = d3.line().x(d => x(d.annee)).y(d => y(d.moyenne));
+    const ends = [];
+    for (const [k, vs] of groups) {
+      vs.sort((a, b) => a.annee - b.annee);
+      svg.append('path').datum(vs).attr('d', line).attr('fill', 'none').attr('stroke', color(k)).attr('stroke-width', 2)
+        .attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round').attr('stroke-dasharray', k === 'Moyenne nationale' ? '5 4' : null);
+      svg.append('g').selectAll('circle').data(vs).join('circle').attr('cx', d => x(d.annee)).attr('cy', d => y(d.moyenne)).attr('r', 3).attr('fill', color(k));
+      const last = vs[vs.length - 1]; ends.push({ k, v: last.moyenne, y: y(last.moyenne) });
+    }
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
+    const over = ends.length ? ends[ends.length - 1].y - (H - bottom) : 0;
+    if (over > 0) ends.forEach(e => e.y -= over);
+    ends.forEach(e => svg.append('text').attr('x', W - labW + 8).attr('y', e.y).attr('dy', '0.35em').style('font-size', 'var(--cds-font-size-caption)')
+      .attr('fill', e.k === 'Moyenne nationale' ? 'var(--color-fg-muted)' : 'var(--color-fg)').text(endLab(e.k, e.v)));
+    const pts = rows.map(r => ({ r, x: x(r.annee), y: y(r.moyenne) }));
+    cxNearest(svg, box, pts, (p, bx, by, t) => cxShow(box, t, [p.r.college, 'Rentrée ' + p.r.annee, 'Moyenne français-maths ' + cxFmt(p.r.moyenne)], bx, by), 30);
+  };
+  dash.onData(draw);
+})();
+</script>
+
+<script>
+dash.calc('parcours', {
+  inputs: ['selection', 'brevet', 'refs_brevet'],
+  title: 'Entrée en 6e et brevet',
+  description: 'Pour chaque collège envisagé : écart à la moyenne nationale à l’entrée en 6e et à l’écrit du brevet, taux de reçus, part de mentions et valeur ajoutée.',
+  fn: (selection, brevet, refs_brevet) => {
+    const nat = refs_brevet.find(r => r.niveau === 'Moyenne nationale');
+    return selection.map(s => {
+      const b = brevet.find(x => String(x.rang) === s.rang) || {};
+      const note = Number(b.note_ecrit);
+      return { rang: s.rang, college: s.college, commune: s.commune, secteur: s.secteur, ecart_6e: s.ecart,
+        note_ecrit: note, ecart_brevet: Math.round((note - Number(nat.note_ecrit)) * 100) / 100,
+        reussite: Number(b.reussite), ecart_reussite: Math.round((Number(b.reussite) - Number(nat.reussite)) * 10) / 10, mentions_pct: Math.round(1000 * Number(b.nb_mentions) / Number(b.nb_candidats)) / 10,
+        va_note: b.va_note === '' || b.va_note == null ? null : Number(b.va_note) };
+    }).sort((a, b) => b.ecart_6e - a.ecart_6e);
+  }
+});
+
+dash.onData(() => {
+  const box = document.getElementById('pc-rows');
+  const D = dash.data('parcours');
+  if (D.status !== 'ok') { cxFail(box, D.status === 'error' ? 'error' : ''); return; }
+  box.innerHTML = '';
+  const S6 = 36, SB = 2.6; // demi-échelles : points en 6e, points sur 20 au brevet
+  const bar = (v, s, txt) => {
+    const w = document.createElement('div'); w.className = 'bar';
+    const i = document.createElement('i'); const span = document.createElement('span');
+    const pct = Math.min(32, Math.abs(v) / s * 32);
+    i.style.width = pct + '%'; i.style.background = v >= 0 ? 'var(--cx-accent)' : 'var(--cds-chart-status-critical)';
+    if (v >= 0) { i.style.left = '50%'; span.style.left = 'calc(50% + ' + pct + '% + 6px)'; }
+    else { i.style.right = '50%'; span.style.right = 'calc(50% + ' + pct + '% + 6px)'; }
+    span.textContent = txt; w.appendChild(i); w.appendChild(span); return w;
+  };
+  for (const r of D.data) {
+    const row = document.createElement('div'); row.className = 'pc-row';
+    const n = document.createElement('div'); n.className = 'pc-name'; n.textContent = r.college;
+    const sub = document.createElement('span'); sub.className = 'muted';
+    sub.textContent = r.commune + ' · ' + r.secteur + ' · brevet : ' + r.note_ecrit.toLocaleString('fr-FR') + '/20 à l’écrit, ' + cxFmt(r.mentions_pct) + ' % de mentions';
+    n.appendChild(sub); row.appendChild(n);
+    const c1 = document.createElement('div'); const l1 = document.createElement('div'); l1.className = 'pc-lab'; l1.textContent = 'Entrée en 6e';
+    c1.appendChild(l1); c1.appendChild(bar(r.ecart_6e, S6, cxSigned(r.ecart_6e))); row.appendChild(c1);
+    const c2 = document.createElement('div'); const l2 = document.createElement('div'); l2.className = 'pc-lab'; l2.textContent = 'Brevet à l’écrit';
+    c2.appendChild(l2); c2.appendChild(bar(r.ecart_brevet, SB, cxSigned(r.ecart_brevet))); row.appendChild(c2);
+    const cR = document.createElement('div'); const lR = document.createElement('div'); lR.className = 'pc-lab'; lR.textContent = 'Reçus au brevet'; cR.appendChild(lR);
+    const big = document.createElement('div'); big.className = 'pc-big'; big.textContent = cxFmt(r.reussite) + ' %'; cR.appendChild(big);
+    const dR = document.createElement('div'); dR.className = 'pc-delta'; dR.textContent = cxSigned(r.ecart_reussite) + ' pts vs national';
+    dR.style.color = r.ecart_reussite >= 0 ? 'var(--color-ok)' : 'var(--color-bad)'; cR.appendChild(dR); row.appendChild(cR);
+    const c3 = document.createElement('div'); const chip = document.createElement('span'); chip.className = 'va';
+    if (r.va_note == null) { chip.textContent = 'Non publiée'; chip.style.color = 'var(--color-fg-muted)'; }
+    else { chip.textContent = (r.va_note > 0 ? 'Mieux que prévu ' : r.va_note >= -0.3 ? 'Comme prévu ' : 'Moins que prévu ') + cxSigned(r.va_note);
+      chip.style.color = r.va_note > 0 ? 'var(--color-ok)' : r.va_note >= -0.3 ? 'var(--color-fg-muted)' : 'var(--color-bad)'; }
+    c3.appendChild(chip); row.appendChild(c3);
+    box.appendChild(row);
+  }
+});
+</script>
+
+<script>
+(() => {
+  let sortK = 'rang', asc = true, q = '';
+  const HL = ['6', '15', '17', '18', '51', '57', '77'];
+  const draw = () => {
+    const tb = document.querySelector('#tbl tbody'); tb.innerHTML = '';
+    const C = dash.data('colleges'), E = dash.data('ecarts');
+    if (C.status !== 'ok') return;
+    const em = new Map((E.status === 'ok' ? E.data : []).map(r => [String(r.rang), r.ecart]));
+    const num = new Set(['rang', 'francais', 'maths', 'ecart', 'distance_km', 'reussite_brevet', 'note_brevet']);
+    let rows = C.data.map(r => ({ ...r, ecart: em.get(String(r.rang)) }));
+    if (q) rows = rows.filter(r => (r.college + ' ' + r.commune + ' ' + r.secteur).toLowerCase().includes(q));
+    if (window.cxOnly) rows = rows.filter(r => HL.includes(String(r.rang)));
+    rows.sort((a, b) => {
+      let va = a[sortK], vb = b[sortK];
+      if (num.has(sortK)) { va = va === '' || va == null ? Infinity : Number(va); vb = vb === '' || vb == null ? Infinity : Number(vb); return asc ? va - vb : vb - va; }
+      return asc ? String(va).localeCompare(String(vb), 'fr') : String(vb).localeCompare(String(va), 'fr');
+    });
+    for (const r of rows) {
+      const tr = document.createElement('tr');
+      if (HL.includes(String(r.rang))) { tr.classList.add('hl'); if (r.secteur === 'Public') tr.classList.add('secteur'); if (String(r.rang) === '77') tr.classList.add('home'); }
+      [['rang', 1], ['college'], ['commune'], ['secteur'], ['francais', 1], ['maths', 1], ['ecart', 1], ['reussite_brevet', 1], ['note_brevet', 1], ['distance_km', 1]].forEach(([k, n]) => {
+        const td = document.createElement('td'); if (n) td.className = 'num';
+        let v = r[k];
+        if (k === 'ecart') { td.textContent = v == null ? '' : cxSigned(v); td.style.color = v > 0 ? 'var(--color-ok)' : 'var(--color-bad)'; }
+        else if (k === 'rang') td.textContent = String(v);
+        else if (n) td.textContent = v === '' || v == null ? '' : cxFmt(v);
+        else td.textContent = v ?? '';
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    }
+    document.querySelectorAll('#tbl th').forEach(th => { const b = th.querySelector('button'); th.setAttribute('aria-sort', b.dataset.k === sortK ? (asc ? 'ascending' : 'descending') : 'none'); });
+  };
+  document.querySelectorAll('#tbl th button').forEach(b => b.addEventListener('click', () => {
+    if (sortK === b.dataset.k) asc = !asc; else { sortK = b.dataset.k; asc = !b.dataset.num || b.dataset.k === 'rang' || b.dataset.k === 'distance_km'; }
+    draw();
+  }));
+  document.getElementById('q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); draw(); });
+  document.getElementById('only').addEventListener('click', e => { window.cxOnly = !window.cxOnly; e.currentTarget.setAttribute('aria-pressed', String(window.cxOnly)); draw(); });
+  dash.onData(draw);
+})();
+</script>
+
+<div class="cx" style="max-width:72rem;margin-inline:auto"><p class="cx-source">Sources : ministère de l’Éducation nationale (DEPP), évaluations nationales de début de 6e par établissement (rentrées 2022 à 2025) et indicateurs de valeur ajoutée des collèges, brevet 2025 ; annuaire de l’éducation. Moyennes régionales et départementales calculées en pondérant chaque collège par son nombre d’élèves. Distances à vol d’oiseau depuis Chevannes.</p></div>
+</div></body></html>
