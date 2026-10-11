@@ -101,7 +101,19 @@ body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(-
 .cx .howto { border-left: 3px solid var(--cx-accent); background: var(--color-bg); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); margin: var(--cds-gap-sm) 0 var(--cds-gap-md); font-size: var(--cds-font-size-caption); }
 .cx .howto-t { font-weight: var(--cds-font-weight-medium); margin-bottom: var(--cds-gap-xs); }
 .cx .howto b { font-weight: var(--cds-font-weight-medium); }
-.cx .chips { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-lg); margin-bottom: var(--cds-gap-md); }
+.cx .filters { border: 1px dashed var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); margin-bottom: var(--cds-gap-md); background: var(--color-bg); }
+.cx .filters-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--cds-gap-xs) var(--cds-gap-sm); margin-bottom: var(--cds-gap-sm); }
+.cx .filters-t { font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); text-transform: uppercase; letter-spacing: .04em; }
+.cx .filters-t::before { content: "⚙ "; }
+.cx .filters-hint { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.cx .chips { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-lg); }
+.cx .toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; box-shadow: 0 1px 0 var(--color-border-line); }
+.cx .toggle .mk { font-weight: var(--cds-font-weight-medium); }
+.cx .toggle:not([aria-pressed=true]):hover { border-color: var(--color-fg-muted); }
+.cx .toggle.colored { border: 2px solid var(--chip); }
+.cx .toggle.colored:not([aria-pressed=true]) { color: var(--color-fg); background: var(--color-bg); }
+.cx .toggle.colored:not([aria-pressed=true])::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--chip); }
+.cx .toggle.colored[aria-pressed=true] { background: var(--chip); border-color: var(--chip); color: #fff; }
 .cx .chip-grp { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; }
 .cx .chip-lab { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-right: var(--cds-gap-xs); }
 @media (max-width: 560px) {
@@ -193,7 +205,7 @@ body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(-
       <div class="howto-t">Comment lire ce schéma</div>
       <ul>
         <li>Chaque ligne suit un collège d'une rentrée à l'autre (moyenne français et maths). Plus elle est haute, meilleur est le niveau.</li>
-        <li>La <b>ligne en pointillés</b> est la moyenne nationale ; les privés et les publics ont chacun leur couleur.</li>
+        <li>La <b>ligne en pointillés</b> est la moyenne nationale ; chaque collège a sa couleur, la même que son bouton de filtre.</li>
         <li>Par défaut, seuls Champcueil, Saint-Spire et Notre-Dame de Sion sont affichés : ajoutez ou retirez des collèges avec les boutons.</li>
         <li>À lire : les deux groupes ne se croisent jamais, l'écart est stable d'une année sur l'autre.</li>
       </ul>
@@ -405,18 +417,28 @@ dash.onData(() => {
 
 <script>
 window.cxF = window.cxF || { stripSect: 'Tous', stripNear: false, dbRefs: true, dbSect: 'Toutes', lines: null };
-window.cxChips = (box, id, groups) => {
+window.cxChips = (box, id, groups, hint) => {
   let wrap = document.getElementById(id);
-  if (!wrap) { wrap = document.createElement('div'); wrap.id = id; wrap.className = 'chips'; box.parentNode.insertBefore(wrap, box); }
+  if (!wrap) { wrap = document.createElement('div'); wrap.id = id; wrap.className = 'filters'; box.parentNode.insertBefore(wrap, box); }
   wrap.innerHTML = '';
+  const head = document.createElement('div'); head.className = 'filters-head';
+  const t = document.createElement('span'); t.className = 'filters-t'; t.textContent = 'Filtres'; head.appendChild(t);
+  const hn = document.createElement('span'); hn.className = 'filters-hint'; hn.textContent = hint || 'Appuyez sur un bouton pour changer ce qui est affiché dans le graphique.'; head.appendChild(hn);
+  wrap.appendChild(head);
+  const chips = document.createElement('div'); chips.className = 'chips'; wrap.appendChild(chips);
   for (const g of groups) {
     const grp = document.createElement('div'); grp.className = 'chip-grp';
-    if (g.label) { const l = document.createElement('span'); l.className = 'chip-lab'; l.textContent = g.label; grp.appendChild(l); }
+    if (g.label) { const l = document.createElement('span'); l.className = 'chip-lab'; l.textContent = g.label + ' :'; grp.appendChild(l); }
     for (const o of g.options) {
-      const b = document.createElement('button'); b.className = 'toggle'; b.type = 'button'; b.textContent = o.text;
-      b.setAttribute('aria-pressed', String(!!o.on)); b.addEventListener('click', o.click); grp.appendChild(b);
+      const b = document.createElement('button'); b.className = 'toggle' + (g.multi ? ' multi' : ''); b.type = 'button';
+      b.setAttribute('aria-pressed', String(!!o.on));
+      const mk = document.createElement('span'); mk.className = 'mk'; mk.textContent = o.on ? '✓' : (g.multi ? '+' : '');
+      if (o.color) { b.style.setProperty('--chip', o.color); b.classList.add('colored'); }
+      if (mk.textContent) b.appendChild(mk);
+      const tx = document.createElement('span'); tx.textContent = o.text; b.appendChild(tx);
+      b.addEventListener('click', o.click); grp.appendChild(b);
     }
-    wrap.appendChild(grp);
+    chips.appendChild(grp);
   }
 };
 </script>
@@ -430,8 +452,8 @@ window.cxChips = (box, id, groups) => {
     const redraw = () => draw();
     cxChips(box, 'strip-chips', [
       { label: 'Afficher', options: ['Tous', 'Privés', 'Publics'].map(t => ({ text: t, on: F.stripSect === t, click: () => { F.stripSect = t; redraw(); } })) },
-      { label: 'Distance', options: [{ text: 'Moins de 15 km de chez nous', on: F.stripNear, click: () => { F.stripNear = !F.stripNear; redraw(); } }] }
-    ]);
+      { label: 'Distance', multi: true, options: [{ text: 'Moins de 15 km de chez nous', on: F.stripNear, click: () => { F.stripNear = !F.stripNear; redraw(); } }] }
+    ], 'Appuyez sur un bouton pour n’afficher que les privés, que les publics ou que les collèges proches.');
     if (C.status !== 'ok' || R.status !== 'ok') { cxFail(box, C.status === 'error' || R.status === 'error' ? 'error' : ''); return; }
     box.innerHTML = '';
     const nat = R.data.find(r => r.niveau === 'Moyenne nationale');
@@ -507,8 +529,8 @@ window.cxChips = (box, id, groups) => {
     const D = dash.data('comparatif'); const F = window.cxF;
     cxChips(box, 'db-chips', [
       { label: 'Collèges', options: ['Toutes', 'Privés', 'Publics'].map(t => ({ text: t === 'Toutes' ? 'Toutes nos options' : t, on: F.dbSect === t, click: () => { F.dbSect = t; draw(); } })) },
-      { label: 'Repères', options: [{ text: 'Moyennes de référence', on: F.dbRefs, click: () => { F.dbRefs = !F.dbRefs; draw(); } }] }
-    ]);
+      { label: 'Repères', multi: true, options: [{ text: 'Moyennes de référence', on: F.dbRefs, click: () => { F.dbRefs = !F.dbRefs; draw(); } }] }
+    ], 'Appuyez sur un bouton pour choisir les collèges comparés et afficher ou masquer les moyennes de référence.');
     if (D.status !== 'ok') { cxFail(box, D.status === 'error' ? 'error' : ''); return; }
     box.innerHTML = '';
     const natRow = D.data.find(r => r.libelle === 'Moyenne nationale');
@@ -561,6 +583,8 @@ window.cxChips = (box, id, groups) => {
 
 <script>
 (() => {
+  const ORDER = ['Olympe de Gouges (Champcueil)', 'Saint-Spire (Corbeil)', 'Notre-Dame de Sion (Évry)', "Jeanne d'Arc (Brétigny)", 'Le Parc de Villeroy (Mennecy)', 'Le Saussay (Ballancourt)'];
+  const lineColor = k => k === 'Moyenne nationale' ? 'var(--cds-chart-reference)' : dash.colors[Math.max(0, ORDER.indexOf(k)) % dash.colors.length];
   const DEF = ['Moyenne nationale', 'Olympe de Gouges (Champcueil)', 'Saint-Spire (Corbeil)', 'Notre-Dame de Sion (Évry)'];
   const draw = () => {
     const box = document.getElementById('lines');
@@ -569,15 +593,16 @@ window.cxChips = (box, id, groups) => {
     const names = [...new Set(D.data.map(r => r.college))];
     if (!F.lines) F.lines = DEF.filter(n => names.includes(n));
     cxChips(box, 'lines-chips', [
-      { label: 'Collèges affichés', options: names.filter(n => n !== 'Moyenne nationale').map(n => ({ text: n.split(' (')[0], on: F.lines.includes(n),
+      { label: 'Collèges affichés', multi: true, options: names.filter(n => n !== 'Moyenne nationale').map(n => ({ text: n.split(' (')[0], on: F.lines.includes(n), color: lineColor(n),
         click: () => { F.lines = F.lines.includes(n) ? F.lines.filter(x => x !== n) : F.lines.concat(n); draw(); } })) }
-    ]);
+    ], 'Appuyez sur le nom d’un collège pour afficher ou masquer sa courbe. La couleur du bouton est celle de la courbe.');
     box.innerHTML = '';
     const rows = D.data.filter(r => r.college === 'Moyenne nationale' || F.lines.includes(r.college));
     const groups = d3.group(rows, r => r.college);
     const W = box.clientWidth, narrow = W < 520, H = 320, top = 16, bottom = 28, mL = 36;
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
-    const endLab = (k, v) => (k === 'Moyenne nationale' ? 'National' : (narrow ? k.split(' (')[0] : k)) + ' ' + cxFmt(v);
+    const SHORT = { 'Olympe de Gouges (Champcueil)': 'Champcueil', 'Saint-Spire (Corbeil)': 'Saint-Spire', 'Notre-Dame de Sion (Évry)': 'N.-D. de Sion', "Jeanne d'Arc (Brétigny)": "Jeanne d'Arc", 'Le Parc de Villeroy (Mennecy)': 'Mennecy', 'Le Saussay (Ballancourt)': 'Ballancourt' };
+    const endLab = (k, v) => (k === 'Moyenne nationale' ? 'National' : (narrow ? (SHORT[k] || k.split(' (')[0]) : k)) + ' ' + cxFmt(v);
     const lastOf = k => { const vs = rows.filter(r => r.college === k).sort((a, b) => a.annee - b.annee); return vs[vs.length - 1]; };
     let lw = 0; for (const k of groups.keys()) { const t = svg.append('text').style('font-size', 'var(--cds-font-size-caption)').text(endLab(k, lastOf(k).moyenne)); lw = Math.max(lw, t.node().getComputedTextLength()); t.remove(); }
     const labW = Math.min(lw + 14, W * 0.45);
@@ -588,8 +613,7 @@ window.cxChips = (box, id, groups) => {
     ya.select('.domain').remove(); ya.selectAll('line').attr('stroke', 'var(--cds-chart-grid)'); ya.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)');
     const xa = svg.append('g').attr('transform', `translate(0,${H - bottom})`).call(d3.axisBottom(x).tickSize(0).tickFormat(d => String(d))).attr('font-size', null).attr('font-family', null);
     xa.select('.domain').attr('stroke', 'var(--cds-chart-axis)'); xa.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').attr('dy', '1.2em');
-    const privates = ['Saint-Spire', 'Notre-Dame', "Jeanne d'Arc"];
-    const color = k => k === 'Moyenne nationale' ? 'var(--cds-chart-reference)' : (privates.some(p => k.startsWith(p)) ? dash.colors[0] : dash.colors[1]);
+    const color = lineColor;
     const line = d3.line().x(d => x(d.annee)).y(d => y(d.moyenne));
     const ends = [];
     for (const [k, vs] of groups) {
